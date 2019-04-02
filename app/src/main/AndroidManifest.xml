@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".DetailPage"></activity>
-        <activity android:name=".OtherPage" />
-        <activity android:name=".MyPage" />
+        <activity android:name=".OtherpageActivity" />
+        <activity android:name=".MyPageActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
