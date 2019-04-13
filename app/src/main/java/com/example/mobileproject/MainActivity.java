@@ -1,79 +1,113 @@
 package com.example.mobileproject;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity implements RecyclerAdapter.MyRecyclerViewClickListener {
+public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerAdapter mAdapter;
+    ViewPager viewPager;
+    PagerAdapter adapter;
+
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        // 프래그먼트 조작을 위해 프래그먼트 매니저를 얻음
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-        recyclerView.setHasFixedSize(false);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
-        // 레이아웃 매니저로 LinearLayoutManager를 설정
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+        viewPager = findViewById(R.id.view_pager);
+        adapter = new ViewPagerAdapter(fragmentManager,3);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
 
-        // 표시할 임시 데이터
-        List<DetailItem> dataList = new ArrayList<>();
-        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다"));
-        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다"));
-        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다"));
-        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요"));
+            @Override
+            public void onPageSelected(int i) {
 
-        // 어댑터 설정
-        mAdapter = new RecyclerAdapter(dataList);
-        mAdapter.setOnClickListener(this);
-        recyclerView.setAdapter(mAdapter);
+            }
 
-        // ItemAnimator
-        DefaultItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(1000);
-        animator.setRemoveDuration(1000);
-        animator.setMoveDuration(1000);
-        animator.setChangeDuration(1000);
-        recyclerView.setItemAnimator(animator);
+            @Override
+            public void onPageScrollStateChanged(int i) {
 
-        // ItemDecoration
-        DividerItemDecoration decoration = new DividerItemDecoration(this, layoutManager.getOrientation());
-        recyclerView.addItemDecoration(decoration);
+            }
+        });
+
+        BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+                = new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        viewPager.setCurrentItem(0);
+                        return true;
+                    case R.id.navigation_dashboard:
+                        viewPager.setCurrentItem(1);
+                        return true;
+                    case R.id.navigation_notifications:
+                        viewPager.setCurrentItem(2);
+                        return true;
+                }
+                return false;
+            }
+        };
+
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+        // ColorFragment를 findFragmentById()로 얻음
+//        FragmentHomeActivity colorFragment = (FragmentHomeActivity) fragmentManager.findFragmentById
+//                (R.id.color_fragment);
+//        // 프래그먼트의 색상 변경
+//        colorFragment.setColor(Color.BLUE);
+
     }
 
-    @Override
-    public void onItemClicked(int position) {
-        Log.d(TAG, "onItemClicked: " + position);
+    public void change(View view) {
+        FragmentHomeActivity fragment = new FragmentHomeActivity();
+
+        int red = new Random().nextInt(256);
+        int green = new Random().nextInt(256);
+        int blue = new Random().nextInt(256);
+
+        fragment.setColor(Color.rgb(red, green, blue));
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
     }
 
-    @Override
-    public void onShareButtonClicked(int position) {
-        Log.d(TAG, "onShareButtonClicked: " + position);
-
-        mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨"));
-    }
-
-    @Override
-    public void onLearnMoreButtonClicked(int position) {
-        Log.d(TAG, "onLearnMoreButtonClicked: " + position);
-
-        // 아이템 삭제
-        mAdapter.removeItem(position);
-    }
 }

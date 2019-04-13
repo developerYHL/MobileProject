@@ -1,7 +1,6 @@
 package com.example.mobileproject;
 
-import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,27 +12,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyPageActivity  extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
+public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerAdapter mAdapter;
 
 
 
-    public MyPageActivity() {
+    public FragmentMyPage() {
         // Required empty public constructor
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_my_page, container, false);
+        View view = inflater.inflate(R.layout.activity_fragment_my_page, container, false);
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
@@ -70,6 +68,7 @@ public class MyPageActivity  extends Fragment implements RecyclerAdapter.MyRecyc
         DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(decoration);
 
+        Log.e("!!!","ASDADSD");
 
         return inflater.inflate(R.layout.activity_my_page, null);
     }
@@ -93,6 +92,4 @@ public class MyPageActivity  extends Fragment implements RecyclerAdapter.MyRecyc
         // 아이템 삭제
         mAdapter.removeItem(position);
     }
-
-
 }

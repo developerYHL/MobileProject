@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailPage"></activity>
+        <activity android:name=".FragmentMyPage"></activity>
+        <activity android:name=".FragmentHomeActivity" />
+        <activity
+            android:name=".NavigationActivity"
+            android:label="@string/title_activity_navigation" />
+        <activity android:name=".DetailPage" />
         <activity android:name=".OtherpageActivity" />
         <activity android:name=".MyPageActivity" />
         <activity android:name=".MainActivity">
