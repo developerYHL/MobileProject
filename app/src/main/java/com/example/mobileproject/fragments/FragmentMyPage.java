@@ -72,7 +72,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 
         Log.e("!!!","ASDADSD");
 
-        return inflater.inflate(R.layout.activity_my_page, null);
+        return view;
     }
 
     @Override
