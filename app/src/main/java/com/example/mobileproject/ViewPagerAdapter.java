@@ -2,10 +2,13 @@ package com.example.mobileproject;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+import com.example.mobileproject.fragments.FragmentHomeActivity;
+import com.example.mobileproject.fragments.FragmentMyPage;
+
+public class ViewPagerAdapter extends FragmentPagerAdapter {
     int mNumOfTabs;
     public ViewPagerAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
@@ -17,19 +20,23 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                Log.e("!!!","asdasd");
+                Log.e("!!!","case0");
                 return new FragmentHomeActivity();
             case 1:
-                Log.e("!!!","ddddd");
+                Log.e("!!!","case1");
                 return new FragmentMyPage();
             case 2:
-                Log.e("!!!","qwe");
-                return new MyPageActivity();
+                Log.e("!!!","case2");
+                return new TestAcitivity();
 
             default:
                 return null;
         }
     }
+
+
+
+
 
     @Override
     public int getCount() {

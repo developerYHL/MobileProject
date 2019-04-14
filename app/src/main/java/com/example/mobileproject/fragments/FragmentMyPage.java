@@ -1,8 +1,6 @@
-package com.example.mobileproject;
+package com.example.mobileproject.fragments;
 
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,7 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.example.mobileproject.DetailItem;
+import com.example.mobileproject.MainActivity;
+import com.example.mobileproject.R;
+import com.example.mobileproject.RecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
