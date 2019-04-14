@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import com.example.mobileproject.fragments.FragmentHome;
 import com.example.mobileproject.fragments.FragmentHomeActivity;
 import com.example.mobileproject.fragments.FragmentMyPage;
 
@@ -20,13 +21,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                Log.e("!!!","case0");
-                return new FragmentHomeActivity();
+                return new FragmentHome();
             case 1:
-                Log.e("!!!","case1");
                 return new FragmentMyPage();
             case 2:
-                Log.e("!!!","case2");
                 return new TestAcitivity();
 
             default:
