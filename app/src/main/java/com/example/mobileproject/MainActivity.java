@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
         BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
                 = new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
