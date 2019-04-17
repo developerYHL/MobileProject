@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.mobileproject.fragments.FragmentHomeActivity;
-
 import java.util.Random;
 
 
@@ -21,12 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     PagerAdapter adapter;
-
-
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         viewPager = findViewById(R.id.view_pager);
-        adapter = new ViewPagerAdapter(fragmentManager,3);
+        adapter = new ViewPagerAdapter(fragmentManager,2);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -81,28 +73,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
-        // ColorFragment를 findFragmentById()로 얻음
-//        FragmentHomeActivity colorFragment = (FragmentHomeActivity) fragmentManager.findFragmentById
-//                (R.id.color_fragment);
-//        // 프래그먼트의 색상 변경
-//        colorFragment.setColor(Color.BLUE);
-
     }
 
-    public void change(View view) {
-        FragmentHomeActivity fragment = new FragmentHomeActivity();
 
-        int red = new Random().nextInt(256);
-        int green = new Random().nextInt(256);
-        int blue = new Random().nextInt(256);
-
-        fragment.setColor(Color.rgb(red, green, blue));
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
-    }
 
 }

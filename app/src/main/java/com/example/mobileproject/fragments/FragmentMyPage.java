@@ -33,7 +33,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.activity_fragment_my_page, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_page, container, false);
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);

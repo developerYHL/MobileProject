@@ -16,11 +16,6 @@
         <activity android:name=".TestActivity" />
         <activity android:name=".fragments.FragmentMyPage" />
         <activity android:name=".fragments.FragmentHomeActivity" />
-        <activity
-            android:name=".NavigationActivity"
-            android:label="@string/title_activity_navigation" />
-        <activity android:name=".DetailPage" />
-        <activity android:name=".OtherpageActivity" />
         <activity android:name=".MyPageActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
