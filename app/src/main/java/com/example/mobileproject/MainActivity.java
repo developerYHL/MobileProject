@@ -1,5 +1,6 @@
 package com.example.mobileproject;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Random;
 
 
@@ -19,11 +23,20 @@ public class MainActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     PagerAdapter adapter;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // 로그인 안 되었음
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        } else {
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+        }
 
         // 프래그먼트 조작을 위해 프래그먼트 매니저를 얻음
         FragmentManager fragmentManager = getSupportFragmentManager();
