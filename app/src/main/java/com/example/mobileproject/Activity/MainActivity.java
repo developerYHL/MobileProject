@@ -1,6 +1,5 @@
-package com.example.mobileproject;
+package com.example.mobileproject.Activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,9 +9,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
-import java.util.Random;
+import com.example.mobileproject.Adapter.ViewPagerAdapter;
+import com.example.mobileproject.R;
 
 
 public class MainActivity extends AppCompatActivity {

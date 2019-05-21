@@ -1,8 +1,11 @@
-package com.example.mobileproject;
+package com.example.mobileproject.model;
+
+import android.media.Image;
 
 public class DetailItem {
     private String title;
     private String contents;
+
 
     public DetailItem(String title, String contents) {
         this.title = title;

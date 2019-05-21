@@ -11,10 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mobileproject.DetailItem;
-import com.example.mobileproject.MainActivity;
+import com.example.mobileproject.model.DetailItem;
+import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.R;
-import com.example.mobileproject.RecyclerAdapter;
+import com.example.mobileproject.Adapter.RecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
