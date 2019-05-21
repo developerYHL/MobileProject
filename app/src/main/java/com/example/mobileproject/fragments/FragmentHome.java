@@ -88,9 +88,9 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
 //        recyclerView.setAdapter(mAdapter);
 
         // 어댑터 설정
-//        mAdapter = new RecyclerAdapter(dataList);
-//        mAdapter.setOnClickListener(this);
-//        recyclerView.setAdapter(mAdapter);
+        mAdapter = new RecyclerAdapter(dataList);
+        mAdapter.setOnClickListener(this);
+        recyclerView.setAdapter(mAdapter);
         //queryData();
 
         // ItemAnimator
