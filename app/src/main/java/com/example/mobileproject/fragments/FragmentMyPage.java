@@ -48,10 +48,10 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 
         // 표시할 임시 데이터
         List<DetailItem> dataList = new ArrayList<>();
-        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다"));
-        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다"));
-        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다"));
-        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요"));
+        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
 
         // 어댑터 설정
         mAdapter = new RecyclerAdapter(dataList);
@@ -84,7 +84,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
     public void onShareButtonClicked(int position) {
         Log.d(TAG, "onShareButtonClicked: " + position);
 
-        mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨"));
+        mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
     }
 
     @Override

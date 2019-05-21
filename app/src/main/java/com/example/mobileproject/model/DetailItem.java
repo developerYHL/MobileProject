@@ -1,15 +1,21 @@
 package com.example.mobileproject.model;
 
-import android.media.Image;
-
 public class DetailItem {
     private String title;
     private String contents;
 
+    private  String downloadUrl;
 
-    public DetailItem(String title, String contents) {
+    public DetailItem(String title, String contents, String downloadUrl) {
         this.title = title;
         this.contents = contents;
+        this.downloadUrl = downloadUrl;
+    }
+
+    public DetailItem(String title, String contents){
+        String downloadUrl =
+                "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391";
+        new DetailItem(title, contents, downloadUrl);
     }
 
     public String getTitle() {
@@ -27,6 +33,16 @@ public class DetailItem {
     public void setContents(String contents) {
         this.contents = contents;
     }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+
 
     @Override
     public String toString() {
