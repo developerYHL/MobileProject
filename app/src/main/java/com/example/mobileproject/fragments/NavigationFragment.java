@@ -1,9 +1,7 @@
-package com.example.mobileproject.fragments;
+package com.example.mobileproject;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.example.mobileproject.R;
 
 public class NavigationFragment extends AppCompatActivity {
 
