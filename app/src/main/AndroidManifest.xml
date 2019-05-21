@@ -11,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activity.MainActivity"></activity>
+        <activity android:name=".Activity.PostActivity"></activity>
+        <activity android:name=".Activity.MainActivity" />
         <activity android:name=".fragments.FragmentMyPage" />
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
