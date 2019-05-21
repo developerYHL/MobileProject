@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     PagerAdapter adapter;
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //카메라 실행
+        //게시글 버튼 클릭
         findViewById(R.id.camera).setOnClickListener(v -> {
-            // Firebase에 추가
-            dispatchTakePictureIntent();
+            //PostActivity 로 이동
+            startActivity(new Intent(this, PostActivity.class));
         });
 
 
