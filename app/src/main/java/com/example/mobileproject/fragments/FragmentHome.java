@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.example.mobileproject.Adapter.asd;
 import com.example.mobileproject.holder.DetailItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
@@ -139,36 +140,6 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
                 .setQuery(query, DetailItem.class)
                 .build();
 
-        // Bind the Chat object to the ChatHolder
-// ...
-// Create a new instance of the ViewHolder, in this case we are using a custom
-// layout called R.layout.message for each item
-        mFirestoreAdapter = new FirestoreRecyclerAdapter<DetailItem, DetailItemHolder>(options) {
-            @Override
-            public void onBindViewHolder(DetailItemHolder holder, int position, DetailItem model) {
-                // Bind the Chat object to the ChatHolder
-                // ...
-                holder.title.setText(model.getTitle());
-                holder.contents.setText(model.getContents() + "");
-
-                Glide.with(FragmentHome.this)
-                        .load(model.getDownloadUrl())
-                        .centerCrop()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(holder.imageView);
-            }
-
-            @Override
-            public DetailItemHolder onCreateViewHolder(ViewGroup group, int i) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                View view = LayoutInflater.from(group.getContext())
-                        .inflate(R.layout.item_detail, group, false);
-
-                return new DetailItemHolder(view);
-            }
-        };
-
-        mRecyclerView.setAdapter(mFirestoreAdapter);
+        mRecyclerView.setAdapter(new asd(options));
     }
 }
