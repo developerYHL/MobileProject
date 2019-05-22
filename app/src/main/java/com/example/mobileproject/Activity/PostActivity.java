@@ -144,11 +144,11 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void writeDb(Uri downloadUri) {
-        String name = mContentsArea.getText().toString();
+        String theBody = mContentsArea.getText().toString();
         //int age = Integer.parseInt(mAgeEditText.getText().toString());
 
         Map<String, Object> post = new HashMap<>();
-        post.put("name", name);
+        post.put("theBody", theBody);
         //post.put("age", age);
         post.put("downloadUrl", downloadUri.toString());
         post.put("uid", mUser.getUid());

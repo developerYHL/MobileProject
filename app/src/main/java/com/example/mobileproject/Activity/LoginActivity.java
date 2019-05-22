@@ -26,6 +26,10 @@ public class LoginActivity extends AppCompatActivity {
         final List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build());
 
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
         findViewById(R.id.login_button).setOnClickListener(v->{
             startActivityForResult(
                     AuthUI.getInstance()
