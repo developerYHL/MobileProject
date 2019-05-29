@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
         }
 
-        findViewById(R.id.login_button).setOnClickListener(v->{
+        findViewById(R.id.email_login).setOnClickListener(v->{
             startActivityForResult(
                     AuthUI.getInstance()
                     .createSignInIntentBuilder()

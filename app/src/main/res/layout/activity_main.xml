@@ -22,6 +22,17 @@
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="16dp" />
 
+        <ImageButton
+            android:id="@+id/jjackstagram"
+            android:layout_width="128dp"
+            android:layout_height="30dp"
+            android:background="@drawable/logoname"
+            android:scaleType="fitXY"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp" />
+
     </LinearLayout>
 
     <LinearLayout
