@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -71,12 +72,13 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar mProgressBar;
     private Button addPlacementButton;
 
-    //place
+    PlacesClient placesClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
 
         mContentsArea = findViewById(R.id.contents_area);
         mProgressBar = findViewById(R.id.progressBar);
@@ -84,6 +86,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
+            placesClient = Places.createClient(this);
         }
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -119,6 +122,42 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LatLng SEOUL = new LatLng(37.56, 126.97);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(SEOUL);
+        markerOptions.title("서울");
+        markerOptions.snippet("한국의 수도");
+        mMap.addMarker(markerOptions);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
+    }
+
+    private void DrawMarkOnMap(Place place){
+
+        // Define a Place ID.
+        String placeId = place.getId();
+
+        // Specify the fields to return.
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
+
+        Log.e("!!!", placeFields.get(3).toString() + "");
+
+        // Construct a request object, passing the place ID and fields array.
+        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                .build();
+
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place mplace = response.getPlace();
+            Log.i(TAG, "Place found: " + mplace.getName());
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                // Handle error with given status code.
+                Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
+        });
+
         LatLng SEOUL = new LatLng(37.56, 126.97);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(SEOUL);
@@ -230,8 +269,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void CheckPermission(){
-        PlacesClient placesClient = Places.createClient(this);
-
 
         // Use fields to define the data types to return.
         List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME);
@@ -264,12 +301,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void GetPlacement(){
-
-
-
         CheckPermission();
-
-
 
         List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
@@ -295,6 +327,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
+                DrawMarkOnMap(place);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
