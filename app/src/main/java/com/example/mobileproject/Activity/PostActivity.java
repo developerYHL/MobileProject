@@ -62,6 +62,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int AUTOCOMPLETE_REQUEST_CODE = 2;
+    static final int REQUEST_IMAGE_GALLAY = 3;
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -119,7 +120,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                         dispatchTakePictureIntent();
                     }else {
                         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(i, 1);
+                        startActivityForResult(i, REQUEST_IMAGE_GALLAY);
                     }
                     dialog.dismiss();
                 }
@@ -132,8 +133,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
             AlertDialog mDialog = mBuilder.create();
             mDialog.show();
-
-            dispatchTakePictureIntent();
         });
 
         findViewById(R.id.upload_button).setOnClickListener(v -> {
@@ -315,13 +314,15 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Uri image = data.getData();
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+        if(requestCode == REQUEST_IMAGE_GALLAY){
+            Uri image = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
 
-            mPreviewImageView.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+                mPreviewImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //IMAGE_CAPTURE
