@@ -46,6 +46,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -106,13 +108,19 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         //카메라 실행
         findViewById(R.id.camera).setOnClickListener(v -> {
             // Firebase에 추가
-            listItems = new String[]{"카메라", "엘범에서 선택"};
+            listItems = new String[]{"사진 촬영", "엘범에서 선택"};
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(PostActivity.this);
-            mBuilder.setTitle("Choose an item");
+            mBuilder.setTitle("촬영");
             mBuilder.setIcon(R.drawable.icon);
             mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    if(which == 0){
+                        dispatchTakePictureIntent();
+                    }else {
+                        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, 1);
+                    }
                     dialog.dismiss();
                 }
             });
@@ -125,7 +133,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             AlertDialog mDialog = mBuilder.create();
             mDialog.show();
 
-            //dispatchTakePictureIntent();
+            dispatchTakePictureIntent();
         });
 
         findViewById(R.id.upload_button).setOnClickListener(v -> {
@@ -137,6 +145,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             GetPlacement();
         });
     }
+
 
 
     @Override
@@ -305,6 +314,15 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Uri image = data.getData();
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+
+            mPreviewImageView.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //IMAGE_CAPTURE
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
