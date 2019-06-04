@@ -1,5 +1,6 @@
 package com.example.mobileproject.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +48,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +64,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int AUTOCOMPLETE_REQUEST_CODE = 2;
+    static final int REQUEST_IMAGE_GALLAY = 3;
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -73,9 +78,15 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar mProgressBar;
     private Button addPlacementButton;
 
+
     private LinearLayout mapLayout;
 
     PlacesClient placesClient;
+
+    private String[] listItems;
+
+    //place
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +121,30 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         //카메라 실행
         findViewById(R.id.camera).setOnClickListener(v -> {
             // Firebase에 추가
-            dispatchTakePictureIntent();
+            listItems = new String[]{"사진 촬영", "엘범에서 선택"};
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(PostActivity.this);
+            mBuilder.setTitle("촬영");
+            mBuilder.setIcon(R.drawable.icon);
+            mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == 0){
+                        dispatchTakePictureIntent();
+                    }else {
+                        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, REQUEST_IMAGE_GALLAY);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            mBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
         });
 
         findViewById(R.id.upload_button).setOnClickListener(v -> {
@@ -122,6 +156,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             GetPlacement();
         });
     }
+
 
 
     @Override
@@ -317,6 +352,17 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == REQUEST_IMAGE_GALLAY){
+            Uri image = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+
+                mPreviewImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //IMAGE_CAPTURE
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
