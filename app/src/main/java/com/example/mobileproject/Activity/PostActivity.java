@@ -127,17 +127,11 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng SEOUL = new LatLng(37.56, 126.97);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("한국의 수도");
-        mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
     }
 
     private void DrawMarkOnMap(Place place){
+        //clear map
+        mMap.clear();
 
         // Define a Place ID.
         String placeId = place.getId();
@@ -146,7 +140,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
 
 
-        Log.e("!!!", place.getLatLng() + "");
+
 
         // Construct a request object, passing the place ID and fields array.
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
@@ -155,6 +149,15 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place mplace = response.getPlace();
             Log.i(TAG, "Place found: " + mplace.getName());
+            Log.i("!!!", mplace.getLatLng() + "");
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(mplace.getLatLng());
+            //markerOptions.title("서울");
+            //markerOptions.snippet("한국의 수도");
+            mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mplace.getLatLng(),16));
+
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
@@ -164,14 +167,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        LatLng SEOUL = new LatLng(37.56, 126.97);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("한국의 수도");
-        mMap.addMarker(markerOptions);
+        //LatLng SEOUL = new LatLng(37.56, 126.97);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
     }
 
     private void addPost(Map<String, Object> post) {
