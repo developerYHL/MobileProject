@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +73,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar mProgressBar;
     private Button addPlacementButton;
 
+    private LinearLayout mapLayout;
+
     PlacesClient placesClient;
 
     @Override
@@ -83,6 +86,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         mContentsArea = findViewById(R.id.contents_area);
         mProgressBar = findViewById(R.id.progressBar);
         mPreviewImageView = findViewById(R.id.camera);
+
+        mapLayout = findViewById(R.id.map_layout);
 
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
@@ -140,7 +145,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Specify the fields to return.
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG);
 
-        Log.e("!!!", placeFields.get(3).toString() + "");
+
+        Log.e("!!!", place.getLatLng() + "");
 
         // Construct a request object, passing the place ID and fields array.
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
@@ -329,6 +335,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 DrawMarkOnMap(place);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                mapLayout.setVisibility(View.VISIBLE);
+
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
