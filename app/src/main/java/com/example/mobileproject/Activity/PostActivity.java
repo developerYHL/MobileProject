@@ -392,6 +392,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         //post.put("age", age);
         post.put("downloadUrl", downloadUri.toString());
         post.put("uid", mUser.getUid());
+        post.put("latlan", mplace.getLatLng());
 
         addPost(post);
     }
