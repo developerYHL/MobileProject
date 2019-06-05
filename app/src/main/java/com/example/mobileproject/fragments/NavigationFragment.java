@@ -1,5 +1,10 @@
 package com.example.mobileproject.fragments;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,88 +16,79 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.RecyclerAdapter;
 import com.example.mobileproject.R;
 import com.example.mobileproject.model.DetailItem;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.maps.android.clustering.ClusterManager;
+
+import android.support.v4.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavigationFragment extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
+public class NavigationFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerAdapter mAdapter;
     private GoogleMap mMap;
+    private ClusterManager<MyItem> mClusterManager;
     
     public NavigationFragment() {
         // Required empty public constructor
     }
+
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+        mClusterManager = new ClusterManager<>(getActivity(), mMap);
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-
-        recyclerView.setHasFixedSize(false);
-
-        // 레이아웃 매니저로 LinearLayoutManager를 설정
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-//        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // 표시할 임시 데이터
-        List<DetailItem> dataList = new ArrayList<>();
-        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-
-        // 어댑터 설정
-        mAdapter = new RecyclerAdapter(dataList);
-        mAdapter.setOnClickListener(this);
-        recyclerView.setAdapter(mAdapter);
-
-        // ItemAnimator
-        DefaultItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(1000);
-        animator.setRemoveDuration(1000);
-        animator.setMoveDuration(1000);
-        animator.setChangeDuration(1000);
-        recyclerView.setItemAnimator(animator);
-
-        // ItemDecoration
-        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        recyclerView.addItemDecoration(decoration);
-
-        Log.e("!!!","ASDADSD");
+        addItems();
 
         return view;
     }
 
-    @Override
-    public void onItemClicked(int position) {
-        Log.d(TAG, "onItemClicked: " + position);
+    private void addItems() {
+
+        // Set some lat/lng coordinates to start with.
+        double lat = 51.5145160;
+        double lng = -0.1270060;
+
+        // Add ten cluster items in close proximity, for purposes of this example.
+        for (int i = 0; i < 10; i++) {
+            double offset = i / 60d;
+            lat = lat + offset;
+            lng = lng + offset;
+            MyItem offsetItem = new MyItem(lat, lng);
+            mClusterManager.addItem(offsetItem);
+        }
     }
 
     @Override
-    public void onShareButtonClicked(int position) {
-        Log.d(TAG, "onShareButtonClicked: " + position);
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
-        mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-    }
-
-    @Override
-    public void onLearnMoreButtonClicked(int position) {
-        Log.d(TAG, "onLearnMoreButtonClicked: " + position);
-
-        // 아이템 삭제
-        mAdapter.removeItem(position);
+        // Add a marker in Sydney, Australia, and move the camera.
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
     }
 }
