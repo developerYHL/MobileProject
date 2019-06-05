@@ -329,7 +329,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == REQUEST_IMAGE_GALLAY){
+        if(requestCode == REQUEST_IMAGE_GALLAY && data != null){
             Uri image = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), image);

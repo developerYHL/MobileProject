@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
         viewPager = findViewById(R.id.view_pager);
-        adapter = new ViewPagerAdapter(fragmentManager,2);
+        adapter = new ViewPagerAdapter(fragmentManager,3);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
