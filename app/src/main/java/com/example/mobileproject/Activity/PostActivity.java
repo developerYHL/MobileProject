@@ -78,6 +78,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar mProgressBar;
     private Button addPlacementButton;
 
+    private Place mplace;
 
     private LinearLayout mapLayout;
 
@@ -159,6 +160,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -182,7 +184,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place mplace = response.getPlace();
+            mplace = response.getPlace();
             Log.i(TAG, "Place found: " + mplace.getName());
             Log.i("!!!", mplace.getLatLng() + "");
 
@@ -206,29 +208,9 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void addPost(Map<String, Object> post) {
-        db.collection("post")
-                .add(post)
-                .addOnSuccessListener(doc -> {
-                    mProgressBar.setVisibility(View.GONE);
-                    // 성공
-                    Toast.makeText(this, "성공", Toast.LENGTH_SHORT).show();
-                    // 맨 위로
-                    //mRecyclerView.smoothScrollToPosition(0);
-                })
-                .addOnFailureListener(e -> {
-                    mProgressBar.setVisibility(View.GONE);
-                    // 실패
-                    Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show();
-                });
-    }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
+
+
 
 
 
@@ -269,17 +251,11 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void writeDb(Uri downloadUri) {
-        String theBody = mContentsArea.getText().toString();
-        //int age = Integer.parseInt(mAgeEditText.getText().toString());
-
-        Map<String, Object> post = new HashMap<>();
-        post.put("theBody", theBody);
-        //post.put("age", age);
-        post.put("downloadUrl", downloadUri.toString());
-        post.put("uid", mUser.getUid());
-
-        addPost(post);
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     public Bitmap resizeBitmapImage(Bitmap source, int maxResolution) {
@@ -388,5 +364,35 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // The user canceled the operation.
             }
         }
+    }
+
+    private void addPost(Map<String, Object> post) {
+        db.collection("post")
+                .add(post)
+                .addOnSuccessListener(doc -> {
+                    mProgressBar.setVisibility(View.GONE);
+                    // 성공
+                    Toast.makeText(this, "성공", Toast.LENGTH_SHORT).show();
+                    // 맨 위로
+                    //mRecyclerView.smoothScrollToPosition(0);
+                })
+                .addOnFailureListener(e -> {
+                    mProgressBar.setVisibility(View.GONE);
+                    // 실패
+                    Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void writeDb(Uri downloadUri) {
+        String theBody = mContentsArea.getText().toString();
+        //int age = Integer.parseInt(mAgeEditText.getText().toString());
+
+        Map<String, Object> post = new HashMap<>();
+        post.put("theBody", theBody);
+        //post.put("age", age);
+        post.put("downloadUrl", downloadUri.toString());
+        post.put("uid", mUser.getUid());
+
+        addPost(post);
     }
 }
