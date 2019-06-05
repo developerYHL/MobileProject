@@ -22,6 +22,7 @@ import com.example.mobileproject.R;
 import com.example.mobileproject.Adapter.RecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -33,11 +34,11 @@ import java.util.List;
 public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerAdapter mAdapter;
+    private FirestoreRecyclerAdapter mAdapter;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private RecyclerView mRecyclerView;
+    private RecyclerView recyclerView;
 
     private FirestoreRecyclerAdapter mFirestoreAdapter;
 
@@ -64,9 +65,9 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
 
         recyclerView.setHasFixedSize(false);
 
@@ -89,10 +90,10 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
 //        recyclerView.setAdapter(mAdapter);
 
         // 어댑터 설정
-        mAdapter = new RecyclerAdapter(dataList);
-        mAdapter.setOnClickListener(this);
+//        mAdapter = new RecyclerAdapter(dataList);
+//        mAdapter.setOnClickListener(this);
         recyclerView.setAdapter(mAdapter);
-        //queryData();
+        queryData();
 
         // ItemAnimator
         DefaultItemAnimator animator = new DefaultItemAnimator();
@@ -111,6 +112,18 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
+    }
+
+    @Override
     public void onItemClicked(int position) {
         Log.d(TAG, "onItemClicked: " + position);
     }
@@ -119,7 +132,7 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
     public void onShareButtonClicked(int position) {
         Log.d(TAG, "onShareButtonClicked: " + position);
 
-        mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+        //mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
     }
 
     @Override
@@ -127,19 +140,18 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
         Log.d(TAG, "onLearnMoreButtonClicked: " + position);
 
         // 아이템 삭제
-        mAdapter.removeItem(position);
+        //mAdapter.removeItem(position);
     }
 
     private void queryData() {
         Query query = FirebaseFirestore.getInstance()
                 .collection("student")
-                .whereEqualTo("uid", mUser.getUid())
-                .orderBy("age", Query.Direction.DESCENDING);
+                .whereEqualTo("uid", mUser.getUid());
 
         FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
                 .setQuery(query, DetailItem.class)
                 .build();
 
-        mRecyclerView.setAdapter(new asd(options));
+        recyclerView.setAdapter(new asd(options));
     }
 }
