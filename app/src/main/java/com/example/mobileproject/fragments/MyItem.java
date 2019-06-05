@@ -12,7 +12,7 @@ public class MyItem implements ClusterItem {
 
     @Override
     public LatLng getPosition() {
-        return null;
+        return mPosition;
     }
 
     @Override

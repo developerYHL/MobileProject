@@ -18,6 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,13 +40,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.maps.android.clustering.ClusterManager;
 
 import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavigationFragment extends Fragment implements OnMapReadyCallback {
+public class NavigationFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private  static  final int REQUEST_CODE_PERMISSIONS = 1000;
     private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationClient;
+
     private ClusterManager<MyItem> mClusterManager;
     
     public NavigationFragment() {
@@ -55,12 +64,7 @@ public class NavigationFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
-        mClusterManager = new ClusterManager<>(getActivity(), mMap);
-        mMap.setOnCameraIdleListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-
-        addItems();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         return view;
     }
@@ -90,5 +94,41 @@ public class NavigationFragment extends Fragment implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+
+        mMap.setOnInfoWindowClickListener((marker) -> {
+            Intent intent = new Intent((Intent.ACTION_DIAL));
+            intent.setData(Uri.parse("tel:1212345"));
+            if(intent.resolveActivity(getActivity().getPackageManager()) != null){
+                startActivity(intent);
+            }
+        });
+
+        mClusterManager = new ClusterManager<>(getActivity(), mMap);
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
+            @Override
+            public boolean onClusterItemClick(MyItem myItem) {
+                Toast.makeText(getActivity(), myItem.getPosition().toString(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        addItems();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
