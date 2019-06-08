@@ -6,6 +6,10 @@ public class DetailItem {
 
     private  String downloadUrl;
 
+    public DetailItem(){
+
+    }
+
     public DetailItem(String title, String contents, String downloadUrl) {
         this.title = title;
         this.contents = contents;

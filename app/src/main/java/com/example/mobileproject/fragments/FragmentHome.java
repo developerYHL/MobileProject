@@ -40,8 +40,6 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private RecyclerView recyclerView;
 
-    private FirestoreRecyclerAdapter mFirestoreAdapter;
-
     private ImageView mPreviewImageView;
 
     private ProgressBar mProgressBar;
@@ -67,6 +65,8 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
+
+
         recyclerView = view.findViewById(R.id.recycler_view);
 
         recyclerView.setHasFixedSize(false);
@@ -78,11 +78,11 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
         recyclerView.setLayoutManager(layoutManager);
 
         // 표시할 임시 데이터
-        List<DetailItem> dataList = new ArrayList<>();
-        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+//        List<DetailItem> dataList = new ArrayList<>();
+//        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+//        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+//        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
+//        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
 
 //        // 어댑터 설정
 //        mAdapter = new RecyclerAdapter(dataList);
@@ -92,20 +92,20 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
         // 어댑터 설정
 //        mAdapter = new RecyclerAdapter(dataList);
 //        mAdapter.setOnClickListener(this);
-        recyclerView.setAdapter(mAdapter);
+        //recyclerView.setAdapter(mAdapter);
         queryData();
 
         // ItemAnimator
-        DefaultItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(1000);
-        animator.setRemoveDuration(1000);
-        animator.setMoveDuration(1000);
-        animator.setChangeDuration(1000);
-        recyclerView.setItemAnimator(animator);
+//        DefaultItemAnimator animator = new DefaultItemAnimator();
+//        animator.setAddDuration(1000);
+//        animator.setRemoveDuration(1000);
+//        animator.setMoveDuration(1000);
+//        animator.setChangeDuration(1000);
+//        recyclerView.setItemAnimator(animator);
 
         // ItemDecoration
-        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        recyclerView.addItemDecoration(decoration);
+//        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
+//        recyclerView.addItemDecoration(decoration);
 
         Log.e("!!!","ASDADSD");
         return view;
@@ -114,6 +114,7 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
     @Override
     public void onStart() {
         super.onStart();
+        if(mAdapter != null)
         mAdapter.startListening();
     }
 
@@ -145,13 +146,42 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
 
     private void queryData() {
         Query query = FirebaseFirestore.getInstance()
-                .collection("student")
-                .whereEqualTo("uid", mUser.getUid());
+                .collection("post")
+                .whereEqualTo("uid", mUser.getUid())
+                .orderBy("uid", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
                 .setQuery(query, DetailItem.class)
                 .build();
 
-        recyclerView.setAdapter(new asd(options));
+        //mAdapter = new asd(options);
+
+        mAdapter = new FirestoreRecyclerAdapter<DetailItem, DetailItemHolder>(options) {
+            @Override
+            public void onBindViewHolder(DetailItemHolder holder, int position, DetailItem model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
+                holder.title.setText(model.getTitle());
+                holder.contents.setText(model.getContents() + "");
+
+                Glide.with(FragmentHome.this)
+                        .load(model.getDownloadUrl())
+                        .centerCrop()
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(holder.imageView);
+            }
+
+            @Override
+            public DetailItemHolder onCreateViewHolder(ViewGroup group, int i) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(group.getContext())
+                        .inflate(R.layout.item_detail, group, false);
+
+                return new DetailItemHolder(view);
+            }
+        };
+
+        recyclerView.setAdapter(mAdapter);
     }
 }
