@@ -16,6 +16,25 @@
         android:orientation="vertical">
 
         <!-- 상단 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
+                android:text="Title"
+                android:textColor="#ffffff"
+                android:textSize="24sp" />
+        </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="150dp">
@@ -27,26 +46,12 @@
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher" />
 
-            <TextView
-                android:id="@+id/title_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:padding="16dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1.0"
-                android:shadowDy="1.0"
-                android:shadowRadius="1.0"
-                android:text="Title"
-                android:textColor="#ffffff"
-                android:textSize="24sp" />
-
         </RelativeLayout>
 
         <!-- 내용 -->
         <TextView
             android:id="@+id/contents_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Contents" />
