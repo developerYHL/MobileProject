@@ -1,6 +1,9 @@
 package com.example.mobileproject.Adapter;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +24,8 @@ public class FirestoreRecyclerAdapter extends com.firebase.ui.firestore.Firestor
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DetailItemHolder holder, int position, @NonNull DetailItem model) {
+    protected void onBindViewHolder(@NonNull DetailItemHolder holder, int position,  DetailItem model) {
+        Log.e("!!!", model.getTitle() + "");
         // Bind the Chat object to the ChatHolder
         // ...
         holder.title.setText(model.getTitle());
@@ -37,6 +41,9 @@ public class FirestoreRecyclerAdapter extends com.firebase.ui.firestore.Firestor
     @NonNull
     @Override
     public DetailItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return null;
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.item_detail, viewGroup, false);
+
+        return new DetailItemHolder(view);
     }
 }
