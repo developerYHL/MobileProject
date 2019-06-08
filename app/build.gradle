@@ -63,6 +63,7 @@ dependencies {
     //autoplace
     implementation 'com.google.android.libraries.places:places:1.1.0'
     implementation 'com.google.android.gms:play-services-places:16.1.0'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
 }
 apply plugin: 'com.google.gms.google-services'
 
