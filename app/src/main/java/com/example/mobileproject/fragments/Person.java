@@ -1,13 +1,15 @@
 package com.example.mobileproject.fragments;
+import android.graphics.Bitmap;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
 public class Person implements ClusterItem {
     public final String name;
-    public final int profilePhoto;
+    public final Bitmap profilePhoto;
     private final LatLng mPosition;
 
-    public Person(LatLng position, String name, int pictureResource) {
+    public Person(LatLng position, String name, Bitmap pictureResource) {
         this.name = name;
         profilePhoto = pictureResource;
         mPosition = position;

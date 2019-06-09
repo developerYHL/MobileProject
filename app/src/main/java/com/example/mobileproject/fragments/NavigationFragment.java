@@ -1,12 +1,18 @@
 package com.example.mobileproject.fragments;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.mobileproject.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -26,6 +32,8 @@ import java.util.Random;
 public class NavigationFragment extends BaseDemoActivity implements ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterInfoWindowClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>, ClusterManager.OnClusterItemInfoWindowClickListener<Person>  {
     private ClusterManager<Person> mClusterManager;
     private Random mRandom = new Random(1984);
+    private String ImageUrl = "https://scontent-icn1-1.xx.fbcdn.net/v/t1.0-9/43047907_2147931808574455_7997802908487778304_n.jpg?_nc_cat=108&_nc_ht=scontent-icn1-1.xx&oh=d1fa52f7a695b236281ab83c1b8b7010&oe=5D8C011F";
+    private String markerName = "승호♥혜연";
 
     /**
      * Draws profile photos inside markers (using IconGenerator).
@@ -57,7 +65,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         protected void onBeforeClusterItemRendered(Person person, MarkerOptions markerOptions) {
             // Draw a single person.
             // Set the info window to show their name.
-            mImageView.setImageResource(person.profilePhoto);
+            mImageView.setImageBitmap(person.profilePhoto);
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(person.name);
         }
@@ -73,7 +81,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
             for (Person p : cluster.getItems()) {
                 // Draw 4 at most.
                 if (profilePhotos.size() == 4) break;
-                Drawable drawable = getResources().getDrawable(p.profilePhoto);
+                Drawable drawable = new BitmapDrawable(p.profilePhoto);
                 drawable.setBounds(0, 0, width, height);
                 profilePhotos.add(drawable);
             }
@@ -154,32 +162,17 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
     }
 
     private void addItems() {
-        // http://www.flickr.com/photos/sdasmarchives/5036248203/
-        mClusterManager.addItem(new Person(position(), "Walter", R.drawable.walter));
 
-        // http://www.flickr.com/photos/usnationalarchives/4726917149/
-        mClusterManager.addItem(new Person(position(), "Gran", R.drawable.gran));
-
-        // http://www.flickr.com/photos/nypl/3111525394/
-        mClusterManager.addItem(new Person(position(), "Ruth", R.drawable.ruth));
-
-        // http://www.flickr.com/photos/smithsonian/2887433330/
-        mClusterManager.addItem(new Person(position(), "Stefan", R.drawable.stefan));
-
-        // http://www.flickr.com/photos/library_of_congress/2179915182/
-        mClusterManager.addItem(new Person(position(), "Mechanic", R.drawable.mechanic));
-
-        // http://www.flickr.com/photos/nationalmediamuseum/7893552556/
-        mClusterManager.addItem(new Person(position(), "Yeats", R.drawable.yeats));
-
-        // http://www.flickr.com/photos/sdasmarchives/5036231225/
-        mClusterManager.addItem(new Person(position(), "John", R.drawable.john));
-
-        // http://www.flickr.com/photos/anmm_thecommons/7694202096/
-        mClusterManager.addItem(new Person(position(), "Trevor the Turtle", R.drawable.turtle));
-
-        // http://www.flickr.com/photos/usnationalarchives/4726892651/
-        mClusterManager.addItem(new Person(position(), "Teach", R.drawable.teacher));
+        Glide.with(getActivity())
+                .asBitmap()
+                .load(ImageUrl)
+                .fitCenter()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        mClusterManager.addItem(new Person(position(), markerName, resource));
+                    }
+                });
     }
 
     private LatLng position() {
