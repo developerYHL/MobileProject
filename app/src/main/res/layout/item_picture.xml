@@ -4,9 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/item_picture_image"
+    <ImageView
+        android:id="@+id/mypage_preview_imageView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher" />
 
 </LinearLayout>

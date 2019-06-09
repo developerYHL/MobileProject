@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
 import com.example.mobileproject.Adapter.asd;
 import com.example.mobileproject.holder.DetailItemHolder;
 import com.example.mobileproject.model.DetailItem;
@@ -35,10 +36,9 @@ import java.util.List;
 public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private FirestoreRecyclerAdapter mAdapter;
+    //private FirestoreRecyclerAdapter mAdapter;
+    private MyPageRecyclerAdapter mAdapter;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private RecyclerView recyclerView;
 
     private ImageView mPreviewImageView;
@@ -63,18 +63,16 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_page, container, false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-
-        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.mypage_recycler_view);
 
         recyclerView.setHasFixedSize(false);
 
         // 레이아웃 매니저로 LinearLayoutManager를 설정
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -94,7 +92,6 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 //        mAdapter = new RecyclerAdapter(dataList);
 //        mAdapter.setOnClickListener(this);
         //recyclerView.setAdapter(mAdapter);
-        queryData();
 
         // ItemAnimator
 //        DefaultItemAnimator animator = new DefaultItemAnimator();
@@ -108,7 +105,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 //        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
 //        recyclerView.addItemDecoration(decoration);
 
-        Log.e("!!!","ASDADSD");
+        queryData();
         return view;
     }
 
@@ -155,7 +152,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
                 .setQuery(query, DetailItem.class)
                 .build();
 
-        mAdapter = new com.example.mobileproject.Adapter.FirestoreRecyclerAdapter(options) {
+        mAdapter = new com.example.mobileproject.Adapter.MyPageRecyclerAdapter(options) {
         };
 
         recyclerView.setAdapter(mAdapter);
