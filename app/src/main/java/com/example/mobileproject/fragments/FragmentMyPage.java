@@ -1,5 +1,6 @@
 package com.example.mobileproject.fragments;
 
+import android.graphics.Rect;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -75,7 +76,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
         // 표시할 임시 데이터
 //        List<DetailItem> dataList = new ArrayList<>();
 //        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
@@ -156,5 +157,28 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         };
 
         recyclerView.setAdapter(mAdapter);
+    }
+}
+
+class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+    private int space;
+
+    public SpacesItemDecoration(int space) {
+        this.space = space;
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect, View view,
+                               RecyclerView parent, RecyclerView.State state) {
+        outRect.left = space;
+        outRect.right = space;
+        outRect.bottom = space;
+
+        // Add top margin only for the first item to avoid double space between items
+        if (parent.getChildLayoutPosition(view) == 0) {
+            outRect.top = space;
+        } else {
+            outRect.top = 0;
+        }
     }
 }

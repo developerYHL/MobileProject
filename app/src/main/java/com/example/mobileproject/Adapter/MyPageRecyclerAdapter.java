@@ -1,9 +1,11 @@
 package com.example.mobileproject.Adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.R;
@@ -25,6 +27,9 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
 
     @Override
     protected void onBindViewHolder(@NonNull SinglePictureHolder holder, int position, DetailItem model) {
+        GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+        layoutParams.width = layoutParams.height;
+
         // Bind the Chat object to the ChatHolder
         // ...
         Glide.with(holder.itemView)
@@ -32,6 +37,8 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
                 .centerCrop()
                 .placeholder(R.mipmap.ic_launcher)
                 .into(holder.imageView);
+
+        holder.itemView.requestLayout();
     }
 
     @NonNull
@@ -39,7 +46,8 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
     public SinglePictureHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_picture, viewGroup, false);
-
+        int height = viewGroup.getMeasuredHeight() / 4;
+        viewGroup.setMinimumHeight(height);
         return new SinglePictureHolder(view);
     }
 }
