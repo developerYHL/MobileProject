@@ -1,25 +1,28 @@
 package com.example.mobileproject.model;
 
+import android.util.Log;
+
 public class DetailItem {
     private String title;
     private String contents;
-
     private  String downloadUrl;
 
+    private String uid;
     public DetailItem(){
 
     }
 
-    public DetailItem(String title, String contents, String downloadUrl) {
+    public DetailItem(String title, String contents, String downloadUrl, String uid) {
         this.title = title;
         this.contents = contents;
         this.downloadUrl = downloadUrl;
+        this.uid = uid;
     }
 
     public DetailItem(String title, String contents){
-        String downloadUrl =
-                "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391";
-        new DetailItem(title, contents, downloadUrl);
+//        String downloadUrl =
+//                "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391";
+//        new DetailItem(title, contents, downloadUrl);
     }
 
     public String getTitle() {
@@ -55,5 +58,13 @@ public class DetailItem {
         sb.append(", contents='").append(contents).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

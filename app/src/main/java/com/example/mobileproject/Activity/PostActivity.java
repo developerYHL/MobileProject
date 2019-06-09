@@ -388,7 +388,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         //int age = Integer.parseInt(mAgeEditText.getText().toString());
 
         Map<String, Object> post = new HashMap<>();
-        post.put("theBody", theBody);
+        post.put("contents", theBody);
         //post.put("age", age);
         post.put("downloadUrl", downloadUri.toString());
         post.put("uid", mUser.getUid());

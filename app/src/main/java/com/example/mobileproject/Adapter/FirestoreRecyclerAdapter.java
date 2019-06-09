@@ -25,11 +25,13 @@ public class FirestoreRecyclerAdapter extends com.firebase.ui.firestore.Firestor
 
     @Override
     protected void onBindViewHolder(@NonNull DetailItemHolder holder, int position,  DetailItem model) {
-        Log.e("!!!", model.getTitle() + "");
+        Log.e("asdasd", model.getDownloadUrl() + "");
+        Log.e("asdasd", model.getTitle() + "");
         // Bind the Chat object to the ChatHolder
         // ...
-        holder.title.setText(model.getTitle());
+        holder.title.setText(model.getUid());
         holder.contents.setText(model.getContents() + "");
+
 
         Glide.with(holder.itemView)
                 .load(model.getDownloadUrl())
