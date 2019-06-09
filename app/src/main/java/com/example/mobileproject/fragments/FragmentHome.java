@@ -146,9 +146,7 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
 
     private void queryData() {
         Query query = FirebaseFirestore.getInstance()
-                .collection("post")
-                .whereEqualTo("uid", mUser.getUid())
-                .orderBy("uid", Query.Direction.DESCENDING);
+                .collection("post");
 
         FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
                 .setQuery(query, DetailItem.class)
