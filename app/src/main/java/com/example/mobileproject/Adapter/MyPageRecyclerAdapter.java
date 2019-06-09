@@ -2,6 +2,7 @@ package com.example.mobileproject.Adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +28,13 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
 
     @Override
     protected void onBindViewHolder(@NonNull SinglePictureHolder holder, int position, DetailItem model) {
-        GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
-        layoutParams.width = layoutParams.height;
+        holder.itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 
+        GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+        Log.e("!!!", "aaa : " + layoutParams.height);
+//        layoutParams.width = 100;
+//        layoutParams.height = layoutParams.width;
+        Log.e("!!!", "a : " + layoutParams.width);
         // Bind the Chat object to the ChatHolder
         // ...
         Glide.with(holder.itemView)
@@ -37,8 +42,9 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
                 .centerCrop()
                 .placeholder(R.mipmap.ic_launcher)
                 .into(holder.imageView);
-
         holder.itemView.requestLayout();
+
+
     }
 
     @NonNull
@@ -48,6 +54,7 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
                 .inflate(R.layout.item_picture, viewGroup, false);
         int height = viewGroup.getMeasuredHeight() / 4;
         viewGroup.setMinimumHeight(height);
+        Log.e("!!!", "bbb : " + height);
         return new SinglePictureHolder(view);
     }
 }
