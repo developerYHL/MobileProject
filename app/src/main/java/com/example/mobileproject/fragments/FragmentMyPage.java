@@ -3,8 +3,6 @@ package com.example.mobileproject.fragments;
 import android.graphics.Rect;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,13 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
-import com.example.mobileproject.Adapter.asd;
-import com.example.mobileproject.holder.DetailItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.R;
@@ -29,20 +26,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.storage.FirebaseStorage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     //private FirestoreRecyclerAdapter mAdapter;
     private MyPageRecyclerAdapter mAdapter;
+    private FirestoreRecyclerAdapter linearAdapter;
 
     private RecyclerView recyclerView;
-
+    private RecyclerView linearRecyclerView;
     private ImageView mPreviewImageView;
+
+    private LinearLayout gridItemLayout;
+    private LinearLayout linearItemLayout;
 
     private ProgressBar mProgressBar;
 
@@ -50,6 +47,8 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 
     DetailItem detailItem;
 
+    private Button changeGridViewButton;
+    private Button changeLinearViewButton;
 
 
     public FragmentMyPage() {
@@ -67,16 +66,61 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         View view = inflater.inflate(R.layout.fragment_my_page, container, false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        recyclerView = view.findViewById(R.id.mypage_recycler_view);
+        recyclerView = view.findViewById(R.id.mypage_grid_recycler_view);
+        linearRecyclerView = view.findViewById(R.id.mypage_linear_recycler_view);
+
+        changeGridViewButton = view.findViewById(R.id.change_grid_button);
+        changeLinearViewButton = view.findViewById(R.id.change_Linear_button);
+
+        gridItemLayout = view.findViewById(R.id.grid_item_layout);
+        linearItemLayout = view.findViewById(R.id.linear_item_layout);
 
         recyclerView.setHasFixedSize(false);
 
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearRecyclerView.setLayoutManager(linearLayoutManager);
+        linearRecyclerView.addItemDecoration(new SpacesItemDecoration(1));
+
+        LinearLayout.LayoutParams linearParams = (LinearLayout.LayoutParams) linearItemLayout.getLayoutParams();
+        LinearLayout.LayoutParams gridParams = (LinearLayout.LayoutParams) gridItemLayout.getLayoutParams();
+
+        changeGridViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearParams.weight = 0f;
+                linearItemLayout.setLayoutParams(linearParams);
+
+                gridParams.weight = 1f;
+                gridItemLayout.setLayoutParams(gridParams);
+
+                gridItemLayout.setVisibility(View.VISIBLE);
+                linearItemLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        changeLinearViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearParams.weight = 1f;
+                linearItemLayout.setLayoutParams(linearParams);
+
+                gridParams.weight = 0f;
+                gridItemLayout.setLayoutParams(gridParams);
+
+                gridItemLayout.setVisibility(View.INVISIBLE);
+                linearItemLayout.setVisibility(View.VISIBLE);
+            }
+        });
         // 레이아웃 매니저로 LinearLayoutManager를 설정
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+//        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
         // 표시할 임시 데이터
 //        List<DetailItem> dataList = new ArrayList<>();
 //        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
@@ -107,6 +151,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 //        recyclerView.addItemDecoration(decoration);
 
         queryData();
+        LinearQueryData();
         return view;
     }
 
@@ -114,12 +159,14 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
     public void onStart() {
         super.onStart();
         if(mAdapter != null)
+            linearAdapter.startListening();
             mAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        linearAdapter.stopListening();
         mAdapter.stopListening();
     }
 
@@ -156,6 +203,21 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         };
 
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void LinearQueryData() {
+        Query query = FirebaseFirestore.getInstance()
+                .collection("post")
+                .whereEqualTo("uid", mUser.getUid());
+
+        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
+                .setQuery(query, DetailItem.class)
+                .build();
+
+        linearAdapter = new com.example.mobileproject.Adapter.FirestoreRecyclerAdapter(options) {
+        };
+
+        linearRecyclerView.setAdapter(linearAdapter);
     }
 }
 

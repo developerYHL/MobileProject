@@ -52,9 +52,9 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
     public SinglePictureHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_picture, viewGroup, false);
-        int height = viewGroup.getMeasuredHeight() / 4;
-        viewGroup.setMinimumHeight(height);
-        Log.e("!!!", "bbb : " + height);
+        //int height = viewGroup.getMeasuredHeight() / 4;
+        //viewGroup.setMinimumHeight(height);
+        //Log.e("!!!", "bbb : " + height);
         return new SinglePictureHolder(view);
     }
 }

@@ -33,14 +33,14 @@
             android:layout_weight="1">
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/change_grid_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Button" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/change_Linear_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -56,17 +56,35 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/grid_item_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1"
+        android:visibility="visible"
         >
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/mypage_recycler_view"
+            android:id="@+id/mypage_grid_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_picture" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="0"
+        android:visibility="invisible"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mypage_linear_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_detail" />
     </LinearLayout>
 
 </LinearLayout>
