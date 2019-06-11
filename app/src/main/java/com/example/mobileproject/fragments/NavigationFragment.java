@@ -1,5 +1,6 @@
 package com.example.mobileproject.fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -55,12 +57,12 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         private final ImageView mClusterImageView;
         private final int mDimension;
 
+
         public ClusterItemRenderer() {
             super(getActivity(), getMap(), mClusterManager);
-            mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            db = FirebaseFirestore.getInstance();
-            queryData();
+
+Log.e("QQQ","ClusterItemRenderer");
 
             View multiProfile = getLayoutInflater().inflate(R.layout.multi_profile, null);
             mClusterIconGenerator.setContentView(multiProfile);
@@ -76,6 +78,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
 
         @Override
         protected void onBeforeClusterItemRendered(ClusterItem person, MarkerOptions markerOptions) {
+            Log.e("QQQ","onBeforeClusterItemRendered");
             // Draw a single person.
             // Set the info window to show their name.
             mImageView.setImageBitmap(person.profilePhoto);
@@ -85,6 +88,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
 
         @Override
         protected void onBeforeClusterRendered(Cluster<ClusterItem> cluster, MarkerOptions markerOptions) {
+            Log.e("QQQ","onBeforeClusterRendered");
             // Draw multiple people.
             // Note: this method runs on the UI thread. Don't spend too much time in here (like in this example).
             List<Drawable> profilePhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
@@ -108,6 +112,8 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
 
         @Override
         protected boolean shouldRenderAsCluster(Cluster cluster) {
+            Log.e("QQQ","shouldRenderAsCluster");
+
             // Always render clusters.
             return cluster.getSize() > 1;
         }
@@ -159,12 +165,16 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
 
     @Override
     protected void startDemo() {
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        db = FirebaseFirestore.getInstance();
+        queryData();
         //queryData();
     }
 
-    private void addItems(String markerName, String ImageUrl, LatLng latLng) {
-        Log.d("#@!", markerName+ " => " + ImageUrl);
-        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.5f));
+    private void addItems(String markerName, String ImageUrl, GeoPoint geoPoint) {
+        Log.d("#@!", markerName+ " => " + geoPoint);
+        //getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.5f));
 
         mClusterManager = new ClusterManager<ClusterItem>(getActivity(), getMap());
         mClusterManager.setRenderer(new ClusterItemRenderer());
@@ -176,6 +186,8 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
+        LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+
         Glide.with(getActivity())
                 .asBitmap()
                 .load(ImageUrl)
@@ -183,7 +195,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        mClusterManager.addItem(new ClusterItem(position(), markerName, resource));
+                        mClusterManager.addItem(new ClusterItem(latLng, markerName, resource));
                     }
                 });
 
@@ -207,7 +219,9 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                addItems(document.getString("uid"), document.getString("downloadUrl"), (LatLng) document.get("latlan"));
+                                //
+                                //, document.getString("downloadUrl"), (LatLng) document.get("latlan")
+                                addItems(document.getString("uid"), document.getString("downloadUrl"), document.getGeoPoint("geopoint"));
                                 Log.d("!@#", document.getId() + " => " + document.getData());
                             }
                         } else {
@@ -217,7 +231,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
                 });
     }
 
-    private LatLng position() {
+    private LatLng position(LatLng latLng) {
         return new LatLng(random(51.6723432, 51.38494009999999), random(0.148271, -0.3514683));
     }
 
