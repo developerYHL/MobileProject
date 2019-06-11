@@ -207,7 +207,7 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                holder.title.setText(model.getUid());
+                holder.nickname.setText(model.getNickname());
                 holder.contents.setText(model.getContents() + "");
 
 

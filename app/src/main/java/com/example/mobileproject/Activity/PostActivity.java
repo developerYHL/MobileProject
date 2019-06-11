@@ -40,6 +40,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
@@ -385,18 +386,27 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show();
                 });
     }
-
+    String temp;
     private void writeDb(Uri downloadUri) {
-        String theBody = mContentsArea.getText().toString();
-        //int age = Integer.parseInt(mAgeEditText.getText().toString());
 
-        Map<String, Object> post = new HashMap<>();
-        post.put("contents", theBody);
-        //post.put("age", age);
-        post.put("downloadUrl", downloadUri.toString());
-        post.put("uid", mUser.getUid());
-        post.put("geopoint",  new GeoPoint(mplace.getLatLng().latitude, mplace.getLatLng().longitude));
+        DocumentReference docRef = db.collection("User").document(mUser.getUid());
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            String theBody = mContentsArea.getText().toString();
+            //int age = Integer.parseInt(mAgeEditText.getText().toString());
 
-        addPost(post);
+            Map<String, Object> post = new HashMap<>();
+            post.put("contents", theBody);
+            //post.put("age", age);
+            post.put("downloadUrl", downloadUri.toString());
+            post.put("uid", mUser.getUid());
+            post.put("geopoint",  new GeoPoint(mplace.getLatLng().latitude, mplace.getLatLng().longitude));
+            post.put("nickname", documentSnapshot.getString("nickname"));
+            addPost(post);
+            Log.e("!#@","AA" + documentSnapshot.getString("nickname"));
+        });
+
+
+
+
     }
 }

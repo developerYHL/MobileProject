@@ -1,9 +1,9 @@
 package com.example.mobileproject.fragments;
 
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,19 +15,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
+import com.example.mobileproject.Adapter.RecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
+import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
-import com.example.mobileproject.Activity.MainActivity;
-import com.example.mobileproject.R;
-import com.example.mobileproject.Adapter.RecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -54,6 +58,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
     private Button changeGridViewButton;
     private Button changeLinearViewButton;
 
+    private TextView idTextView;
 
     public FragmentMyPage() {
         // Required empty public constructor
@@ -78,6 +83,8 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
 
         gridItemLayout = view.findViewById(R.id.grid_item_layout);
         linearItemLayout = view.findViewById(R.id.linear_item_layout);
+
+        idTextView = view.findViewById(R.id.ID);
 
         recyclerView.setHasFixedSize(false);
 
@@ -167,6 +174,8 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
                 return true;
             }
         });
+
+        showID();
         queryData();
         LinearQueryData();
         return view;
@@ -222,6 +231,19 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         recyclerView.setAdapter(mAdapter);
     }
 
+    private  void showID(){
+        FirebaseFirestore db;
+        db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("User").document(mUser.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                idTextView.setText(documentSnapshot.getString("nickname"));
+            }
+        });
+
+    }
+
     private void LinearQueryData() {
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
@@ -236,7 +258,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                holder.title.setText(model.getUid());
+                holder.nickname.setText(model.getNickname());
                 holder.contents.setText(model.getContents() + "");
 
 

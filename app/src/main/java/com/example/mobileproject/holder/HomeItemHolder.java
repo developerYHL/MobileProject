@@ -12,7 +12,7 @@ import com.example.mobileproject.R;
 // 반드시 RecyclerView.ViewHolder를 상속해야 함
 public class HomeItemHolder extends RecyclerView.ViewHolder {
 
-    public TextView title;
+    public TextView nickname;
     public TextView contents;
 
     public ImageView imageView;
@@ -22,7 +22,7 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
     public HomeItemHolder(View itemView) {
         super(itemView);
-        title = (TextView) itemView.findViewById(R.id.title_text);
+        nickname = (TextView) itemView.findViewById(R.id.title_text);
         contents = (TextView) itemView.findViewById(R.id.contents_text);
 
         imageView = itemView.findViewById(R.id.imageView);

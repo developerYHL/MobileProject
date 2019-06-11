@@ -26,10 +26,10 @@ public class asd extends FirestoreRecyclerAdapter<DetailItem, HomeItemHolder> {
 
     @Override
     protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
-        Log.e("!!!", model.getTitle() + "");
+        Log.e("!!!", model.getNickname() + "");
         // Bind the Chat object to the ChatHolder
         // ...
-        holder.title.setText(model.getTitle());
+        holder.nickname.setText(model.getNickname());
         holder.contents.setText(model.getContents() + "");
 
         Glide.with(holder.itemView)

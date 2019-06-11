@@ -35,7 +35,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         DetailItem item = mDataList.get(position);
 
-        holder.title.setText(item.getTitle());
+        holder.title.setText(item.getNickname());
         holder.contents.setText(item.getContents());
 
         // 클릭 이벤트

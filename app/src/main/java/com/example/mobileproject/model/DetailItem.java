@@ -1,22 +1,19 @@
 package com.example.mobileproject.model;
 
-import android.util.Log;
-
 public class DetailItem {
-    private String title;
+    private String nickname;
     private String contents;
     private  String downloadUrl;
 
-    private String uid;
     public DetailItem(){
 
     }
 
-    public DetailItem(String title, String contents, String downloadUrl, String uid) {
-        this.title = title;
+    public DetailItem(String nickname, String contents, String downloadUrl, String uid) {
+        this.nickname = nickname;
         this.contents = contents;
         this.downloadUrl = downloadUrl;
-        this.uid = uid;
+        this.nickname = uid;
     }
 
     public DetailItem(String title, String contents){
@@ -25,12 +22,12 @@ public class DetailItem {
 //        new DetailItem(title, contents, downloadUrl);
     }
 
-    public String getTitle() {
-        return title;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setNickname(String title) {
+        this.nickname = title;
     }
 
     public String getContents() {
@@ -54,17 +51,10 @@ public class DetailItem {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("CardItem{");
-        sb.append("title='").append(title).append('\'');
+        sb.append("nickname='").append(nickname).append('\'');
         sb.append(", contents='").append(contents).append('\'');
         sb.append('}');
         return sb.toString();
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
 }
