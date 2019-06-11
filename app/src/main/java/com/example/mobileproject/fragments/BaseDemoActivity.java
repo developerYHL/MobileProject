@@ -16,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 public abstract class BaseDemoActivity extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public abstract class BaseDemoActivity extends Fragment implements OnMapReadyCal
     public void onResume() {
         super.onResume();
         setUpMap();
+        startDemo();
     }
 
     @Override

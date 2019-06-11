@@ -179,28 +179,32 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Construct a request object, passing the place ID and fields array.
         FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
                 .build();
+        try{
 
-        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            mplace = response.getPlace();
-            Log.i(TAG, "Place found: " + mplace.getName());
-            Log.i("!!!", mplace.getLatLng() + "");
 
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(mplace.getLatLng());
-            //markerOptions.title("서울");
-            //markerOptions.snippet("한국의 수도");
-            mMap.addMarker(markerOptions);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mplace.getLatLng(),16));
+            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                mplace = response.getPlace();
+                Log.i(TAG, "Place found: " + mplace.getName());
+                Log.i("!!!", mplace.getLatLng() + "");
 
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                int statusCode = apiException.getStatusCode();
-                // Handle error with given status code.
-                Log.e(TAG, "Place not found: " + exception.getMessage());
-            }
-        });
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(mplace.getLatLng());
+                //markerOptions.title("서울");
+                //markerOptions.snippet("한국의 수도");
+                mMap.addMarker(markerOptions);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mplace.getLatLng(),16));
 
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    ApiException apiException = (ApiException) exception;
+                    int statusCode = apiException.getStatusCode();
+                    // Handle error with given status code.
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+    }catch (Exception e){
+            Toast.makeText(this, "업로드에 실패했습니다.", Toast.LENGTH_SHORT).show();
+    }
         //LatLng SEOUL = new LatLng(37.56, 126.97);
 
     }

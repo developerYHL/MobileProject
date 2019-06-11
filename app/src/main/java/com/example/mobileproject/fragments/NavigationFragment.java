@@ -1,6 +1,5 @@
 package com.example.mobileproject.fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -46,6 +45,9 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
     private Random mRandom = new Random(1984);
     FirebaseFirestore db;
     private FirebaseUser mUser;
+
+
+
     /**
      * Draws profile photos inside markers (using IconGenerator).
      * When there are multiple people in the cluster, draw multiple photos (using MultiDrawable).
@@ -56,6 +58,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         private final ImageView mImageView;
         private final ImageView mClusterImageView;
         private final int mDimension;
+
 
 
         public ClusterItemRenderer() {
