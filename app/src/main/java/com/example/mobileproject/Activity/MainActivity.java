@@ -1,9 +1,7 @@
 package com.example.mobileproject.Activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -12,17 +10,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import com.example.mobileproject.Adapter.ViewPagerAdapter;
-import com.example.mobileproject.MapsActivity;
 import com.example.mobileproject.R;
+import com.firebase.ui.auth.AuthUI;
 
 
 public class MainActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     PagerAdapter adapter;
-
+    Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 
+        logoutButton = findViewById(R.id.logout_button);
         viewPager = findViewById(R.id.view_pager);
         adapter = new ViewPagerAdapter(fragmentManager,3);
         viewPager.setAdapter(adapter);
@@ -51,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int i) {
 
             }
+        });
+
+        logoutButton.setOnClickListener(v -> {
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(task -> {
+                        startActivity(new Intent(this, LoginActivity.class));
+                        // ...
+                    });
         });
 
         //게시글 버튼 클릭

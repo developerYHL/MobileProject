@@ -21,16 +21,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -177,7 +172,7 @@ Log.e("QQQ","ClusterItemRenderer");
 
     private void addItems(String markerName, String ImageUrl, GeoPoint geoPoint) {
         Log.d("#@!", markerName+ " => " + geoPoint);
-        //getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.5f));
+
 
         mClusterManager = new ClusterManager<ClusterItem>(getActivity(), getMap());
         mClusterManager.setRenderer(new ClusterItemRenderer());
@@ -190,7 +185,7 @@ Log.e("QQQ","ClusterItemRenderer");
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
         LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
-
+        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.5f));
         Glide.with(getActivity())
                 .asBitmap()
                 .load(ImageUrl)
@@ -207,29 +202,24 @@ Log.e("QQQ","ClusterItemRenderer");
 
     private  void queryData(){
         // Create a reference to the cities collection
-        CollectionReference citiesRef = db.collection("post");
-
-        // Create a query against the collection.
-        Query query = citiesRef.whereEqualTo("uid", true);
-
-        Log.e("query", "query : " + query);
+//        CollectionReference citiesRef = db.collection("post");
+//
+//        // Create a query against the collection.
+//        Query query = citiesRef.whereEqualTo("uid", true);
+//
+//        Log.e("query", "query : " + query);
 
         db.collection("post")
                 .whereEqualTo("uid", mUser.getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                //
-                                //, document.getString("downloadUrl"), (LatLng) document.get("latlan")
-                                addItems(document.getString("uid"), document.getString("downloadUrl"), document.getGeoPoint("geopoint"));
-                                Log.d("!@#", document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.d("!@#", "Error getting documents: ", task.getException());
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            addItems(document.getString("uid"), document.getString("downloadUrl"), document.getGeoPoint("geopoint"));
+                            Log.d("!@#", document.getId() + " => " + document.getData());
                         }
+                    } else {
+                        Log.d("!@#", "Error getting documents: ", task.getException());
                     }
                 });
     }
