@@ -35,7 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
+public class FragmentMyPage extends Fragment {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     //private FirestoreRecyclerAdapter mAdapter;
@@ -126,40 +126,7 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
                 linearItemLayout.setVisibility(View.VISIBLE);
             }
         });
-        // 레이아웃 매니저로 LinearLayoutManager를 설정
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-//        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-//        recyclerView.setLayoutManager(layoutManager);
-//        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
-        // 표시할 임시 데이터
-//        List<DetailItem> dataList = new ArrayList<>();
-//        dataList.add(new DetailItem("이것은 첫번째 아이템", "안드로이드 보이라고 합니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-//        dataList.add(new DetailItem("이것은 세번째 아이템", "이번엔 세줄\n두번째 줄\n세번째 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-//        dataList.add(new DetailItem("이것은 두번째 아이템", "두 줄 입력도 해 볼게요\n두 줄 입니다", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-//        dataList.add(new DetailItem("이것은 네번째 아이템", "잘 되네요", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
 
-//        // 어댑터 설정
-//        mAdapter = new RecyclerAdapter(dataList);
-//        mAdapter.setOnClickListener(this);
-//        recyclerView.setAdapter(mAdapter);
-
-        // 어댑터 설정
-//        mAdapter = new RecyclerAdapter(dataList);
-//        mAdapter.setOnClickListener(this);
-        //recyclerView.setAdapter(mAdapter);
-
-        // ItemAnimator
-//        DefaultItemAnimator animator = new DefaultItemAnimator();
-//        animator.setAddDuration(1000);
-//        animator.setRemoveDuration(1000);
-//        animator.setMoveDuration(1000);
-//        animator.setChangeDuration(1000);
-//        recyclerView.setItemAnimator(animator);
-
-        // ItemDecoration
-//        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-//        recyclerView.addItemDecoration(decoration);
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -194,26 +161,6 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         super.onStop();
         linearAdapter.stopListening();
         mAdapter.stopListening();
-    }
-
-    @Override
-    public void onItemClicked(int position) {
-        Log.d(TAG, "onItemClicked: " + position);
-    }
-
-    @Override
-    public void onShareButtonClicked(int position) {
-        Log.d(TAG, "onShareButtonClicked: " + position);
-
-        //mAdapter.addItem(position, new DetailItem("추가 됨", "추가 됨", "https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/Chrysanthemum.jpg?alt=media&token=e9570d16-8569-4f43-9d54-0fb68c9e6391"));
-    }
-
-    @Override
-    public void onLearnMoreButtonClicked(int position) {
-        Log.d(TAG, "onLearnMoreButtonClicked: " + position);
-
-        // 아이템 삭제
-        //mAdapter.removeItem(position);
     }
 
     private void queryData() {
