@@ -1,7 +1,7 @@
 package com.example.mobileproject.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
-import com.example.mobileproject.R;
 import com.example.mobileproject.Adapter.RecyclerAdapter;
+import com.example.mobileproject.ItemClickSupport;
+import com.example.mobileproject.R;
+import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,10 +43,6 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
         // Required empty public constructor
     }
 
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,6 +61,21 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
 //        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
+
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Log.e("123","???");
+            }
+        });
+
+        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                Log.e("321","!!!");
+                return true;
+            }
+        });
 
         // 표시할 임시 데이터
 //        List<DetailItem> dataList = new ArrayList<>();
