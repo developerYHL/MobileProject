@@ -1,6 +1,7 @@
 package com.example.mobileproject.fragments;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,8 +16,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
+import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.R;
@@ -229,6 +232,29 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
                 .build();
 
         linearAdapter = new com.example.mobileproject.Adapter.FirestoreRecyclerAdapter(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
+                holder.title.setText(model.getUid());
+                holder.contents.setText(model.getContents() + "");
+
+
+                Glide.with(holder.itemView)
+                        .load(model.getDownloadUrl())
+                        .centerCrop()
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(holder.imageView);
+            }
+
+            @NonNull
+            @Override
+            public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_detail, viewGroup, false);
+
+                return new HomeItemHolder(view);
+            }
         };
 
         linearRecyclerView.setAdapter(linearAdapter);
