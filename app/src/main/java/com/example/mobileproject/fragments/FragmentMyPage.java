@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
+import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.R;
@@ -149,7 +150,20 @@ public class FragmentMyPage extends Fragment implements RecyclerAdapter.MyRecycl
         // ItemDecoration
 //        DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
 //        recyclerView.addItemDecoration(decoration);
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Log.e("123","???");
+            }
+        });
 
+        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                Log.e("321","!!!");
+                return true;
+            }
+        });
         queryData();
         LinearQueryData();
         return view;

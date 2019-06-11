@@ -29,6 +29,5 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
         share = (Button) itemView.findViewById(R.id.share_button);
         more = (Button) itemView.findViewById(R.id.more_button);
-
     }
 }
