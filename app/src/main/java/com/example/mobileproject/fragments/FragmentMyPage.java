@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
-import com.example.mobileproject.Adapter.RecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;

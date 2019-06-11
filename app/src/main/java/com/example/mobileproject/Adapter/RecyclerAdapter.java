@@ -83,8 +83,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             title = (TextView) itemView.findViewById(R.id.title_text);
             contents = (TextView) itemView.findViewById(R.id.contents_text);
 
-            share = (Button) itemView.findViewById(R.id.share_button);
-            more = (Button) itemView.findViewById(R.id.more_button);
+            //share = (Button) itemView.findViewById(R.id.share_button);
+           // more = (Button) itemView.findViewById(R.id.more_button);
 
         }
     }
