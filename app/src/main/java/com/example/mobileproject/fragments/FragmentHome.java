@@ -2,8 +2,6 @@ package com.example.mobileproject.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,9 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.example.mobileproject.Adapter.asd;
-import com.example.mobileproject.holder.DetailItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.R;
@@ -27,9 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecyclerViewClickListener {
 
@@ -45,10 +37,6 @@ public class FragmentHome extends Fragment implements RecyclerAdapter.MyRecycler
     private ProgressBar mProgressBar;
 
     private FirebaseUser mUser;
-
-    DetailItem detailItem;
-
-
 
     public FragmentHome() {
         // Required empty public constructor

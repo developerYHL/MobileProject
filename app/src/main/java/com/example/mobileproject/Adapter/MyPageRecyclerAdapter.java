@@ -1,16 +1,12 @@
 package com.example.mobileproject.Adapter;
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.R;
-import com.example.mobileproject.holder.DetailItemHolder;
 import com.example.mobileproject.holder.SinglePictureHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -28,13 +24,13 @@ public class MyPageRecyclerAdapter extends com.firebase.ui.firestore.FirestoreRe
 
     @Override
     protected void onBindViewHolder(@NonNull SinglePictureHolder holder, int position, DetailItem model) {
-        holder.itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-
-        GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
-        Log.e("!!!", "aaa : " + layoutParams.height);
-//        layoutParams.width = 100;
-//        layoutParams.height = layoutParams.width;
-        Log.e("!!!", "a : " + layoutParams.width);
+//        holder.itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//
+//        GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+//        Log.e("!!!", "aaa : " + layoutParams.height);
+////        layoutParams.width = 100;
+////        layoutParams.height = layoutParams.width;
+//        Log.e("!!!", "a : " + layoutParams.width);
         // Bind the Chat object to the ChatHolder
         // ...
         Glide.with(holder.itemView)

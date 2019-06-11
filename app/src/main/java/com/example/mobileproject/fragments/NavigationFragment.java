@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,13 +15,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.mobileproject.R;
+import com.example.mobileproject.model.ClusterItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
@@ -29,25 +39,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class NavigationFragment extends BaseDemoActivity implements ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterInfoWindowClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>, ClusterManager.OnClusterItemInfoWindowClickListener<Person>  {
-    private ClusterManager<Person> mClusterManager;
+public class NavigationFragment extends BaseDemoActivity implements ClusterManager.OnClusterClickListener<ClusterItem>, ClusterManager.OnClusterInfoWindowClickListener<ClusterItem>, ClusterManager.OnClusterItemClickListener<ClusterItem>, ClusterManager.OnClusterItemInfoWindowClickListener<ClusterItem>  {
+    private ClusterManager<ClusterItem> mClusterManager;
     private Random mRandom = new Random(1984);
-    private String ImageUrl = "https://scontent-icn1-1.xx.fbcdn.net/v/t1.0-9/43047907_2147931808574455_7997802908487778304_n.jpg?_nc_cat=108&_nc_ht=scontent-icn1-1.xx&oh=d1fa52f7a695b236281ab83c1b8b7010&oe=5D8C011F";
-    private String markerName = "승호♥혜연";
-
+    FirebaseFirestore db;
+    private FirebaseUser mUser;
     /**
      * Draws profile photos inside markers (using IconGenerator).
      * When there are multiple people in the cluster, draw multiple photos (using MultiDrawable).
      */
-    private class PersonRenderer extends DefaultClusterRenderer<Person> {
+    private class ClusterItemRenderer extends DefaultClusterRenderer<ClusterItem> {
         private final IconGenerator mIconGenerator = new IconGenerator(getActivity());
         private final IconGenerator mClusterIconGenerator = new IconGenerator(getActivity());
         private final ImageView mImageView;
         private final ImageView mClusterImageView;
         private final int mDimension;
 
-        public PersonRenderer() {
+        public ClusterItemRenderer() {
             super(getActivity(), getMap(), mClusterManager);
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            db = FirebaseFirestore.getInstance();
+            queryData();
 
             View multiProfile = getLayoutInflater().inflate(R.layout.multi_profile, null);
             mClusterIconGenerator.setContentView(multiProfile);
@@ -62,7 +75,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(Person person, MarkerOptions markerOptions) {
+        protected void onBeforeClusterItemRendered(ClusterItem person, MarkerOptions markerOptions) {
             // Draw a single person.
             // Set the info window to show their name.
             mImageView.setImageBitmap(person.profilePhoto);
@@ -71,14 +84,14 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         }
 
         @Override
-        protected void onBeforeClusterRendered(Cluster<Person> cluster, MarkerOptions markerOptions) {
+        protected void onBeforeClusterRendered(Cluster<ClusterItem> cluster, MarkerOptions markerOptions) {
             // Draw multiple people.
             // Note: this method runs on the UI thread. Don't spend too much time in here (like in this example).
             List<Drawable> profilePhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
             int width = mDimension;
             int height = mDimension;
 
-            for (Person p : cluster.getItems()) {
+            for (ClusterItem p : cluster.getItems()) {
                 // Draw 4 at most.
                 if (profilePhotos.size() == 4) break;
                 Drawable drawable = new BitmapDrawable(p.profilePhoto);
@@ -101,7 +114,8 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
     }
 
     @Override
-    public boolean onClusterClick(Cluster<Person> cluster) {
+    public boolean onClusterClick(Cluster<ClusterItem> cluster) {
+
         // Show a toast with some info when the cluster is clicked.
         String firstName = cluster.getItems().iterator().next().name;
         Toast.makeText(getActivity(), cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
@@ -111,7 +125,7 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
 
         // Create the builder to collect all essential cluster items for the bounds.
         LatLngBounds.Builder builder = LatLngBounds.builder();
-        for (ClusterItem item : cluster.getItems()) {
+        for (com.google.maps.android.clustering.ClusterItem item : cluster.getItems()) {
             builder.include(item.getPosition());
         }
         // Get the LatLngBounds
@@ -128,27 +142,32 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
     }
 
     @Override
-    public void onClusterInfoWindowClick(Cluster<Person> cluster) {
+    public void onClusterInfoWindowClick(Cluster<ClusterItem> cluster) {
         // Does nothing, but you could go to a list of the users.
     }
 
     @Override
-    public boolean onClusterItemClick(Person item) {
+    public boolean onClusterItemClick(ClusterItem item) {
         // Does nothing, but you could go into the user's profile page, for example.
         return false;
     }
 
     @Override
-    public void onClusterItemInfoWindowClick(Person item) {
+    public void onClusterItemInfoWindowClick(ClusterItem item) {
         // Does nothing, but you could go into the user's profile page, for example.
     }
 
     @Override
     protected void startDemo() {
-        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 9.5f));
+        //queryData();
+    }
 
-        mClusterManager = new ClusterManager<Person>(getActivity(), getMap());
-        mClusterManager.setRenderer(new PersonRenderer());
+    private void addItems(String markerName, String ImageUrl, LatLng latLng) {
+        Log.d("#@!", markerName+ " => " + ImageUrl);
+        getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 9.5f));
+
+        mClusterManager = new ClusterManager<ClusterItem>(getActivity(), getMap());
+        mClusterManager.setRenderer(new ClusterItemRenderer());
         getMap().setOnCameraIdleListener(mClusterManager);
         getMap().setOnMarkerClickListener(mClusterManager);
         getMap().setOnInfoWindowClickListener(mClusterManager);
@@ -157,12 +176,6 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
-        addItems();
-        mClusterManager.cluster();
-    }
-
-    private void addItems() {
-
         Glide.with(getActivity())
                 .asBitmap()
                 .load(ImageUrl)
@@ -170,7 +183,36 @@ public class NavigationFragment extends BaseDemoActivity implements ClusterManag
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        mClusterManager.addItem(new Person(position(), markerName, resource));
+                        mClusterManager.addItem(new ClusterItem(position(), markerName, resource));
+                    }
+                });
+
+        mClusterManager.cluster();
+    }
+
+    private  void queryData(){
+        // Create a reference to the cities collection
+        CollectionReference citiesRef = db.collection("post");
+
+        // Create a query against the collection.
+        Query query = citiesRef.whereEqualTo("uid", true);
+
+        Log.e("query", "query : " + query);
+
+        db.collection("post")
+                .whereEqualTo("uid", mUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                addItems(document.getString("uid"), document.getString("downloadUrl"), (LatLng) document.get("latlan"));
+                                Log.d("!@#", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.d("!@#", "Error getting documents: ", task.getException());
+                        }
                     }
                 });
     }

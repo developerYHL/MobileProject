@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.R;
-import com.example.mobileproject.fragments.FragmentHome;
-import com.example.mobileproject.holder.DetailItemHolder;
+import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class asd extends FirestoreRecyclerAdapter<DetailItem, DetailItemHolder> {
+public class asd extends FirestoreRecyclerAdapter<DetailItem, HomeItemHolder> {
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
      * FirestoreRecyclerOptions} for configuration options.
@@ -26,7 +25,7 @@ public class asd extends FirestoreRecyclerAdapter<DetailItem, DetailItemHolder> 
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull DetailItemHolder holder, int position,  DetailItem model) {
+    protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
         Log.e("!!!", model.getTitle() + "");
         // Bind the Chat object to the ChatHolder
         // ...
@@ -42,10 +41,10 @@ public class asd extends FirestoreRecyclerAdapter<DetailItem, DetailItemHolder> 
 
     @NonNull
     @Override
-    public DetailItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_detail, viewGroup, false);
 
-        return new DetailItemHolder(view);
+        return new HomeItemHolder(view);
     }
 }

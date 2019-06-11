@@ -1,15 +1,19 @@
-package com.example.mobileproject.fragments;
+package com.example.mobileproject.holder;
+
 import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.Cluster;
 
-public class Person implements ClusterItem {
+import java.util.Collection;
+
+public class ClusterItemHolder implements Cluster {
+
     public final String name;
     public final Bitmap profilePhoto;
     private final LatLng mPosition;
 
-    public Person(LatLng position, String name, Bitmap pictureResource) {
+    public ClusterItemHolder(LatLng position, String name, Bitmap pictureResource) {
         this.name = name;
         profilePhoto = pictureResource;
         mPosition = position;
@@ -21,12 +25,14 @@ public class Person implements ClusterItem {
     }
 
     @Override
-    public String getTitle() {
+    public Collection getItems() {
         return null;
     }
 
     @Override
-    public String getSnippet() {
-        return null;
+    public int getSize() {
+        return 0;
     }
+
+
 }

@@ -10,7 +10,7 @@ import com.example.mobileproject.R;
 
 // 각각의 아이템의 레퍼런스를 저장할 뷰 홀더 클래스
 // 반드시 RecyclerView.ViewHolder를 상속해야 함
-public class DetailItemHolder extends RecyclerView.ViewHolder {
+public class HomeItemHolder extends RecyclerView.ViewHolder {
 
     public TextView title;
     public TextView contents;
@@ -20,7 +20,7 @@ public class DetailItemHolder extends RecyclerView.ViewHolder {
     public Button share;
     public Button more;
 
-    public DetailItemHolder(View itemView) {
+    public HomeItemHolder(View itemView) {
         super(itemView);
         title = (TextView) itemView.findViewById(R.id.title_text);
         contents = (TextView) itemView.findViewById(R.id.contents_text);
