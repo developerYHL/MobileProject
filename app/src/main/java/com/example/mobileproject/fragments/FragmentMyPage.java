@@ -33,6 +33,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class FragmentMyPage extends Fragment {
 
@@ -165,6 +166,23 @@ public class FragmentMyPage extends Fragment {
         super.onStop();
         linearAdapter.stopListening();
         mAdapter.stopListening();
+    }
+
+    private void CommentQueryData() {
+
+
+        Query query = FirebaseFirestore.getInstance()
+                .collection("post")
+                .whereEqualTo("uid", mUser.getUid());
+
+        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
+                .setQuery(query, DetailItem.class)
+                .build();
+
+        mAdapter = new com.example.mobileproject.Adapter.MyPageRecyclerAdapter(options) {
+        };
+
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void queryData() {
