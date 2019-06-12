@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/mypage_preview_imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/ic_launcher" />
 

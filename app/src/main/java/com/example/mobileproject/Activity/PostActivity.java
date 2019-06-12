@@ -132,6 +132,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }else {
                         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(i, REQUEST_IMAGE_GALLAY);
+                        finish();
                     }
                     dialog.dismiss();
                 }
@@ -149,6 +150,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         findViewById(R.id.upload_button).setOnClickListener(v -> {
             mProgressBar.setVisibility(View.VISIBLE);
             uploadPicture();
+            startActivity(new Intent(this, MainActivity.class));
         });
 
         findViewById(R.id.addlocation_button).setOnClickListener(v -> {

@@ -39,7 +39,7 @@ public abstract class BaseDemoActivity extends Fragment implements OnMapReadyCal
             return;
         }
         mMap = map;
-        startDemo();
+        //startDemo();
     }
 
     private void setUpMap() {
