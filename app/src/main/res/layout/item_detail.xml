@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginEnd="8dp"
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
@@ -79,20 +80,19 @@
                 -->
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/comment_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="invisible">
 
-
-
-            <ImageView
-                android:id="@+id/imageView2"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/comment_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:background="#CECECE"
-                android:src="@drawable/avatar"
-                android:animateLayoutChanges="true"/>
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_comment"
+                />
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

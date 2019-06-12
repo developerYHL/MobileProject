@@ -43,10 +43,13 @@ public class FragmentMyPage extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView linearRecyclerView;
+    private RecyclerView commentRecyclerView;
+
     private ImageView mPreviewImageView;
 
     private LinearLayout gridItemLayout;
     private LinearLayout linearItemLayout;
+    private LinearLayout CommentLayout;
 
     private ProgressBar mProgressBar;
 
@@ -76,6 +79,8 @@ public class FragmentMyPage extends Fragment {
 
         recyclerView = view.findViewById(R.id.mypage_grid_recycler_view);
         linearRecyclerView = view.findViewById(R.id.mypage_linear_recycler_view);
+        commentRecyclerView = view.findViewById(R.id.comment_recycler_view);
+        CommentLayout = view.findViewById(R.id.comment_layout);
 
         changeGridViewButton = view.findViewById(R.id.change_grid_button);
         changeLinearViewButton = view.findViewById(R.id.change_Linear_button);

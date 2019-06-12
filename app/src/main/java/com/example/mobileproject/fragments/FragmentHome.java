@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +37,7 @@ public class FragmentHome extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private RecyclerView recyclerView;
+    private RecyclerView commentView;
 
     private ImageView mPreviewImageView;
 
@@ -47,7 +49,7 @@ public class FragmentHome extends Fragment {
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     // 직전에 클릭됐던 Item의 position
     private int prePosition = -1;
-    private ImageView imageView2;
+    private LinearLayout commentLayout;
 
     public FragmentHome() {
         // Required empty public constructor
@@ -121,10 +123,10 @@ public class FragmentHome extends Fragment {
                 // value는 height 값
                 int value = (int) animation.getAnimatedValue();
                 // imageView의 높이 변경
-                imageView2.getLayoutParams().height = value;
-                imageView2.requestLayout();
+                commentLayout.getLayoutParams().height = value;
+                commentLayout.requestLayout();
                 // imageView가 실제로 사라지게하는 부분
-                imageView2.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+                commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             }
         });
         // Animation start
@@ -175,7 +177,7 @@ public class FragmentHome extends Fragment {
             public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
-                imageView2 = view.findViewById(R.id.imageView2);
+                commentLayout = view.findViewById(R.id.comment_layout);
 
                 return new HomeItemHolder(view);
             }

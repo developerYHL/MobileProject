@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
 
         findViewById(R.id.email_login).setOnClickListener(v->{
