@@ -309,7 +309,7 @@ public class FragmentMyPage extends Fragment {
             public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
-                imageView2 = view.findViewById(R.id.imageView2);
+                //imageView2 = view.findViewById(R.id.imageView2);
                 return new HomeItemHolder(view);
             }
         };
