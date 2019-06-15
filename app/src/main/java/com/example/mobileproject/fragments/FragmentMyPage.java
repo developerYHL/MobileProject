@@ -1,10 +1,18 @@
 package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +24,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
@@ -28,14 +36,24 @@ import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FragmentMyPage extends Fragment {
 
@@ -43,18 +61,16 @@ public class FragmentMyPage extends Fragment {
     //private FirestoreRecyclerAdapter mAdapter;
     private MyPageRecyclerAdapter mAdapter;
     private FirestoreRecyclerAdapter linearAdapter;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private RecyclerView recyclerView;
     private RecyclerView linearRecyclerView;
     private RecyclerView commentRecyclerView;
 
-    private ImageView mPreviewImageView;
-
     private LinearLayout gridItemLayout;
     private LinearLayout linearItemLayout;
     private LinearLayout CommentLayout;
-
-    private ProgressBar mProgressBar;
 
     private FirebaseUser mUser;
 
@@ -64,12 +80,17 @@ public class FragmentMyPage extends Fragment {
     private Button changeLinearViewButton;
 
     private TextView idTextView;
+    private ImageView idImageView;
 
     // Item의 클릭 상태를 저장할 array 객체
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     // 직전에 클릭됐던 Item의 position
     private int prePosition = -1;
     private ImageView imageView2;
+
+    private String[] listItems;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_IMAGE_GALLAY = 3;
 
     public FragmentMyPage() {
         // Required empty public constructor
@@ -98,6 +119,7 @@ public class FragmentMyPage extends Fragment {
         linearItemLayout = view.findViewById(R.id.linear_item_layout);
 
         idTextView = view.findViewById(R.id.ID);
+        idImageView = view.findViewById(R.id.ID_imageview);
 
         recyclerView.setHasFixedSize(false);
 
@@ -185,10 +207,145 @@ public class FragmentMyPage extends Fragment {
             }
         });
 
+        idImageView.setOnClickListener(v -> {
+            // Firebase에 추가
+            listItems = new String[]{"사진 촬영", "엘범에서 선택", "기본 이미지"};
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+            mBuilder.setTitle("촬영");
+            mBuilder.setIcon(R.drawable.icon);
+            mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(which == 0){
+                        dispatchTakePictureIntent();
+                    }else if(which == 1) {
+                        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, REQUEST_IMAGE_GALLAY);
+                    }else {
+                        deleteDb();
+                        idImageView.setImageResource(R.drawable.ic_menu_camera);
+                    }
+                    dialog.dismiss();
+                }
+            });
+            mBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
+        });
+
         showID();
         queryData();
         LinearQueryData();
         return view;
+    }
+
+    private void uploadPicture() {
+        StorageReference storageRef = storage.getReference()
+                .child("images/" + System.currentTimeMillis() + ".jpg");
+
+        idImageView.setDrawingCacheEnabled(true);
+        idImageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) idImageView.getDrawable()).getBitmap();
+
+        // 이미지 줄이기
+        bitmap = resizeBitmapImage(bitmap, 300);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageRef.putBytes(data);
+        uploadTask.addOnFailureListener(exception -> {
+            Toast.makeText(getActivity(), "업로드에 실패했습니다.", Toast.LENGTH_SHORT).show();
+        }).addOnSuccessListener(taskSnapshot -> {
+            // 성공
+            storageRef.getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    Log.d(TAG, "uploadPicture: " + downloadUri);
+                    writeDb(downloadUri);
+                } else {
+                    // Handle failures
+                    // ...
+                }
+            });
+        });
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    public Bitmap resizeBitmapImage(Bitmap source, int maxResolution) {
+        int width = source.getWidth();
+        int height = source.getHeight();
+        int newWidth = width;
+        int newHeight = height;
+        float rate = 0.0f;
+
+        if (width > height) {
+            if (maxResolution < width) {
+                rate = maxResolution / (float) width;
+                newHeight = (int) (height * rate);
+                newWidth = maxResolution;
+            }
+        } else {
+            if (maxResolution < height) {
+                rate = maxResolution / (float) height;
+                newWidth = (int) (width * rate);
+                newHeight = maxResolution;
+            }
+        }
+
+        return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
+    }
+
+    private void writeDb(Uri downloadUri) {
+        Map<String, Object> post = new HashMap<>();
+        post.put("downloadUrl", downloadUri.toString());
+
+        db.collection("User").document(mUser.getUid())
+                .set(post, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getActivity(), "성공", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "실패", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+    }
+
+    private void deleteDb() {
+        Map<String, Object> post = new HashMap<>();
+        post.put("downloadUrl", FieldValue.delete());
+
+        db.collection("User").document(mUser.getUid())
+                .set(post, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getActivity(), "성공", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "실패", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void changeVisibility(final boolean isExpanded) {
@@ -232,6 +389,28 @@ public class FragmentMyPage extends Fragment {
         mAdapter.stopListening();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_GALLAY && data != null){
+            Uri image = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), image);
+                idImageView.setImageBitmap(bitmap);
+                uploadPicture();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //IMAGE_CAPTURE
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            idImageView.setImageBitmap(imageBitmap);
+            uploadPicture();
+        }
+    }
+
     private void CommentQueryData() {
 
 
@@ -272,6 +451,13 @@ public class FragmentMyPage extends Fragment {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 idTextView.setText(documentSnapshot.getString("nickname"));
+                if(documentSnapshot.getString("downloadUrl") != null) {
+                    Glide.with(getActivity())
+                            .load(documentSnapshot.getString("downloadUrl"))
+                            .into(idImageView);
+                }else {
+                    idImageView.setImageResource(R.drawable.ic_menu_camera);
+                }
             }
         });
 

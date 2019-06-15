@@ -8,6 +8,8 @@
     <color name="graylight">#fafafa</color>
     <color name="startblue">#09c6df</color>
     <color name="endblue">#0bcce6</color>
+    <color name="default_background">#FF000000</color>
+    FF000000
 
 <color name="login_form_details">#ccffffff</color>
 <color name="login_form_details_light">#1affffff</color>

@@ -7,8 +7,9 @@
     tools:context=".Activity.MainActivity">
 
     <LinearLayout
+        android:background="@color/login_form_details_medium"
         android:id="@+id/top_level_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         >
