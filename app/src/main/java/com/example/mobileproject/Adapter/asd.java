@@ -29,14 +29,14 @@ public class asd extends FirestoreRecyclerAdapter<DetailItem, HomeItemHolder> {
         Log.e("!!!", model.getNickname() + "");
         // Bind the Chat object to the ChatHolder
         // ...
-        holder.nickname.setText(model.getNickname());
-        holder.contents.setText(model.getContents() + "");
+        holder.getNickname().setText(model.getNickname());
+        holder.getContents().setText(model.getContents() + "");
 
         Glide.with(holder.itemView)
                 .load(model.getDownloadUrl())
                 .centerCrop()
                 .placeholder(R.mipmap.ic_launcher)
-                .into(holder.imageView);
+                .into(holder.getImageView());
     }
 
     @NonNull
