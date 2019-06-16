@@ -64,7 +64,7 @@ Log.e("QQQ","ClusterItemRenderer");
 
             View multiProfile = getLayoutInflater().inflate(R.layout.multi_profile, null);
             mClusterIconGenerator.setContentView(multiProfile);
-            mClusterImageView = (ImageView) multiProfile.findViewById(R.id.image);
+            mClusterImageView = multiProfile.findViewById(R.id.image);
 
             mImageView = new ImageView(getActivity());
             mDimension = (int) getResources().getDimension(R.dimen.custom_profile_image);
@@ -167,14 +167,13 @@ Log.e("QQQ","ClusterItemRenderer");
 
         db = FirebaseFirestore.getInstance();
         queryData();
-        //queryData();
     }
 
     private void addItems(String markerName, String ImageUrl, GeoPoint geoPoint) {
         Log.d("#@!", markerName+ " => " + geoPoint);
 
 
-        mClusterManager = new ClusterManager<ClusterItem>(getActivity(), getMap());
+        mClusterManager = new ClusterManager<>(getActivity(), getMap());
         mClusterManager.setRenderer(new ClusterItemRenderer());
         getMap().setOnCameraIdleListener(mClusterManager);
         getMap().setOnMarkerClickListener(mClusterManager);
@@ -201,13 +200,7 @@ Log.e("QQQ","ClusterItemRenderer");
     }
 
     private  void queryData(){
-        // Create a reference to the cities collection
-//        CollectionReference citiesRef = db.collection("post");
-//
-//        // Create a query against the collection.
-//        Query query = citiesRef.whereEqualTo("uid", true);
-//
-//        Log.e("query", "query : " + query);
+
 
         db.collection("post")
                 .whereEqualTo("uid", mUser.getUid())
