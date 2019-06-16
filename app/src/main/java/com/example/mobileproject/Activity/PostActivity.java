@@ -116,7 +116,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         //카메라 실행
         findViewById(R.id.camera).setOnClickListener(v -> {
             // Firebase에 추가
@@ -387,6 +386,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show();
                 });
     }
+
     String temp;
     private void writeDb(Uri downloadUri) {
 

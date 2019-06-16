@@ -14,12 +14,12 @@ import android.widget.Button;
 
 import com.example.mobileproject.Adapter.ViewPagerAdapter;
 import com.example.mobileproject.R;
+import com.example.mobileproject.SwipeViewPager;
 import com.firebase.ui.auth.AuthUI;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    ViewPager viewPager;
+    SwipeViewPager viewPager;
     PagerAdapter adapter;
     Button logoutButton;
 

@@ -7,8 +7,9 @@
     tools:context=".Activity.MainActivity">
 
     <LinearLayout
+        android:background="@color/login_form_details_medium"
         android:id="@+id/top_level_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         >
@@ -55,7 +56,7 @@
         android:layout_above="@+id/navigation"
         >
 
-        <android.support.v4.view.ViewPager
+        <com.example.mobileproject.SwipeViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -3,6 +3,7 @@ package com.example.mobileproject.Adapter;
 import android.support.annotation.NonNull;
 import android.view.ViewGroup;
 
+import com.example.mobileproject.Activity.PostActivity;
 import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -16,6 +17,7 @@ public abstract class FirestoreRecyclerAdapter extends com.firebase.ui.firestore
      */
     public FirestoreRecyclerAdapter(@NonNull FirestoreRecyclerOptions<DetailItem> options) {
         super(options);
+
     }
 
     @Override
