@@ -73,18 +73,16 @@
         <RelativeLayout
             android:id="@+id/comment_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="invisible">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/comment_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:listitem="@layout/item_comment"
-                android:layout_alignParentTop="true"
-                />
-
+                android:layout_alignParentTop="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -92,7 +90,7 @@
                 android:orientation="horizontal"
                 android:weightSum="11"
                 android:layout_below="@+id/comment_recycler_view"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <EditText
                     android:id="@+id/comment_edittext"

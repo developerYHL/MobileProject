@@ -1,6 +1,7 @@
 package com.example.mobileproject.Adapter;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,10 @@ public class CommentRecyclerAdapter extends com.firebase.ui.firestore.FirestoreR
     protected void onBindViewHolder(@NonNull CommentItemHolder holder, int position, CommentItem model) {
 
         holder.nickname.setText(model.getNickname());
-        holder.contents.setText(model.getComment());
+        holder.contents.setText(model.getContents());
+
+        Log.i("logcomment", model.getContents());
+        Log.i("logcomment", model.getNickname());
 
         holder.itemView.requestLayout();
     }
@@ -36,7 +40,7 @@ public class CommentRecyclerAdapter extends com.firebase.ui.firestore.FirestoreR
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_picture, viewGroup, false);
 
-
+        Log.i("logcomment", "asd");
         return new CommentItemHolder(view);
     }
 }
