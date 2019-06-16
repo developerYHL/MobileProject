@@ -49,17 +49,28 @@
 
         </RelativeLayout>
 
-        <!-- 내용 -->
-        <TextView
-            android:id="@+id/contents_text"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textColor="#000000"
-            android:text="Contents" />
+            android:orientation="horizontal"
+            android:weightSum="11">
+
+            <!-- 내용 -->
+            <TextView
+                android:id="@+id/contents_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textColor="#000000"
+                android:text="Contents"
+                android:layout_weight="11"/>
+
+
+        </LinearLayout>
 
         <!-- 버튼 -->
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/comment_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,12 +82,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_comment"
+                android:layout_alignParentTop="true"
                 />
 
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="11"
+                android:layout_below="@+id/comment_recycler_view">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"/>
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@android:drawable/ic_menu_add"
+                    android:contentDescription="TODO"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

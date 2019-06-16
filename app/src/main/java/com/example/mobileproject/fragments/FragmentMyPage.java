@@ -86,7 +86,8 @@ public class FragmentMyPage extends Fragment {
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     // 직전에 클릭됐던 Item의 position
     private int prePosition = -1;
-    private ImageView imageView2;
+    //private ImageView imageView2;
+
 
     private String[] listItems;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -119,7 +120,7 @@ public class FragmentMyPage extends Fragment {
         linearItemLayout = view.findViewById(R.id.linear_item_layout);
 
         idTextView = view.findViewById(R.id.ID);
-        idImageView = view.findViewById(R.id.ID_imageview);
+        idImageView = view.findViewById(R.id.id_imageview);
 
         recyclerView.setHasFixedSize(false);
 
@@ -364,10 +365,10 @@ public class FragmentMyPage extends Fragment {
                 // value는 height 값
                 int value = (int) animation.getAnimatedValue();
                 // imageView의 높이 변경
-                imageView2.getLayoutParams().height = value;
-                imageView2.requestLayout();
+                CommentLayout.getLayoutParams().height = value;
+                CommentLayout.requestLayout();
                 // imageView가 실제로 사라지게하는 부분
-                imageView2.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+                CommentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             }
         });
         // Animation start
@@ -495,7 +496,7 @@ public class FragmentMyPage extends Fragment {
             public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
-                //imageView2 = view.findViewById(R.id.imageView2);
+                CommentLayout = view.findViewById(R.id.comment_layout);
                 return new HomeItemHolder(view);
             }
         };
