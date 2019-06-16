@@ -5,11 +5,13 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/comment_id_textview"
+        android:id="@+id/comment_nickname_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
         android:text="TextView" />
 
     <TextView
@@ -18,5 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
+        android:textColor="#000000"
         android:text="TextView" />
 </LinearLayout>

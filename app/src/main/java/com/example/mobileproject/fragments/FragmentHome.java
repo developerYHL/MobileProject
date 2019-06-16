@@ -18,9 +18,11 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
+import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
+import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -40,6 +42,7 @@ public class FragmentHome extends Fragment {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private FirestoreRecyclerAdapter mAdapter;
+    private FirestoreRecyclerAdapter commentAdapter;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -72,26 +75,37 @@ public class FragmentHome extends Fragment {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         recyclerView = view.findViewById(R.id.recycler_view);
+        commentView = view.findViewById(R.id.comment_recycler_view);
+
         commentLayout = view.findViewById(R.id.comment_layout);
 
         recyclerView.setHasFixedSize(false);
+//        commentView.setHasFixedSize(false);
 
         // 레이아웃 매니저로 LinearLayoutManager를 설정
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 //        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
+//        commentView.setLayoutManager(layoutManager);
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 Log.e("123","???");
 
+
+
                 if (selectedItems.get(position)) {
+                    commentAdapter.stopListening();
+
+
                     // 펼쳐진 Item을 클릭 시
                     Log.e("delete1","delete");
                     selectedItems.delete(position);
                 } else {
+                    commentAdapter.stopListening();
+
                     // 직전의 클릭됐던 Item의 클릭상태를 지움
                     Log.e("delete2","delete");
                     selectedItems.delete(prePosition);
@@ -148,12 +162,30 @@ public class FragmentHome extends Fragment {
         super.onStart();
         if(mAdapter != null)
         mAdapter.startListening();
+
+        if(commentAdapter != null)
+            commentAdapter.startListening();
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+    }
+
+    private void commentQueryData(DetailItem model){
+        Query query = FirebaseFirestore.getInstance()
+                .collection("post").document(model.getTimeStamp())
+                .collection("comment");
+
+        FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
+                .setQuery(query, CommentItem.class)
+                .build();
+
+        commentAdapter = new CommentRecyclerAdapter(options);
+
+        commentView.setAdapter(commentAdapter);
     }
 
     private void queryData() {
@@ -205,7 +237,9 @@ public class FragmentHome extends Fragment {
                                 }
                             });
 
+
                 });
+                commentQueryData(model);
 
                 Glide.with(holder.itemView)
                         .load(model.getDownloadUrl())
@@ -223,6 +257,7 @@ public class FragmentHome extends Fragment {
                         .inflate(R.layout.item_detail, viewGroup, false);
                 commentLayout = view.findViewById(R.id.comment_layout);
                 commentEditText = view.findViewById(R.id.comment_edittext);
+                commentView = view.findViewById(R.id.comment_recycler_view);
 
                 return new HomeItemHolder(view);
             }
