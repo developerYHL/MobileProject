@@ -1,8 +1,6 @@
 package com.example.mobileproject.Adapter
 
 import android.view.ViewGroup
-
-import com.example.mobileproject.Activity.PostActivity
 import com.example.mobileproject.holder.HomeItemHolder
 import com.example.mobileproject.model.DetailItem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
