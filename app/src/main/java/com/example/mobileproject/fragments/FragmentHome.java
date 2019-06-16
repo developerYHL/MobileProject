@@ -11,9 +11,10 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
@@ -23,11 +24,17 @@ import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FragmentHome extends Fragment {
 
@@ -49,7 +56,9 @@ public class FragmentHome extends Fragment {
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     // 직전에 클릭됐던 Item의 position
     private int prePosition = -1;
-    private LinearLayout commentLayout;
+    private RelativeLayout commentLayout;
+
+    private EditText commentEditText;
 
     public FragmentHome() {
         // Required empty public constructor
@@ -63,6 +72,7 @@ public class FragmentHome extends Fragment {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         recyclerView = view.findViewById(R.id.recycler_view);
+        commentLayout = view.findViewById(R.id.comment_layout);
 
         recyclerView.setHasFixedSize(false);
 
@@ -147,6 +157,8 @@ public class FragmentHome extends Fragment {
     }
 
     private void queryData() {
+
+
         Query query = FirebaseFirestore.getInstance()
                 .collection("post");
 
@@ -159,9 +171,41 @@ public class FragmentHome extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
+
+
+
+                //model.setPostNum();
                 holder.nickname.setText(model.getNickname());
                 holder.contents.setText(model.getContents() + "");
+                holder.commentPost.setOnClickListener(v -> {
 
+                    //시간
+                    Long tsLong = System.currentTimeMillis()/1000;
+                    String ts = tsLong.toString();
+
+                    Map<String, Object> docData = new HashMap<>();
+                    docData.put("contents", commentEditText.getText().toString());
+                    docData.put("timestamp", new Date());
+                    docData.put("uid", mUser.getUid());
+
+
+                    db.collection("post").document(model.getTimeStamp())
+                            .collection("comment").document(ts)
+                            .set(docData)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error writing document", e);
+                                }
+                            });
+
+                });
 
                 Glide.with(holder.itemView)
                         .load(model.getDownloadUrl())
@@ -178,6 +222,7 @@ public class FragmentHome extends Fragment {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
                 commentLayout = view.findViewById(R.id.comment_layout);
+                commentEditText = view.findViewById(R.id.comment_edittext);
 
                 return new HomeItemHolder(view);
             }

@@ -5,6 +5,10 @@ public class DetailItem {
     private String contents;
     private  String downloadUrl;
 
+
+
+    private String timestamp;
+
     public DetailItem(){
 
     }
@@ -46,7 +50,13 @@ public class DetailItem {
         this.downloadUrl = downloadUrl;
     }
 
+    public String getTimeStamp() {
+        return timestamp;
+    }
 
+    public void setTimeStamp(String postNum) {
+        this.timestamp = postNum;
+    }
 
     @Override
     public String toString() {

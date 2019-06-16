@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,7 +71,7 @@ public class FragmentMyPage extends Fragment {
 
     private LinearLayout gridItemLayout;
     private LinearLayout linearItemLayout;
-    private LinearLayout CommentLayout;
+    private RelativeLayout CommentLayout;
 
     private FirebaseUser mUser;
 
@@ -480,7 +481,7 @@ public class FragmentMyPage extends Fragment {
                 // ...
                 holder.nickname.setText(model.getNickname());
                 holder.contents.setText(model.getContents() + "");
-
+                //Log.e("log",model.getTimeStamp());
 
                 Glide.with(holder.itemView)
                         .load(model.getDownloadUrl())

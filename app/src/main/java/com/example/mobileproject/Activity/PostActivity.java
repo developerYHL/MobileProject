@@ -87,6 +87,9 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     //place
 
 
+    Long tsLong;
+    String ts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -369,8 +372,9 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addPost(Map<String, Object> post) {
-        db.collection("post")
-                .add(post)
+
+        db.collection("post").document(ts)
+                .set(post)
                 .addOnSuccessListener(doc -> {
                     mProgressBar.setVisibility(View.GONE);
                     // 성공
@@ -389,7 +393,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     String temp;
     private void writeDb(Uri downloadUri) {
-
+        tsLong = System.currentTimeMillis()/1000;
+        ts = tsLong.toString();
         DocumentReference docRef = db.collection("User").document(mUser.getUid());
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             String theBody = mContentsArea.getText().toString();
@@ -402,6 +407,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             post.put("uid", mUser.getUid());
             post.put("geopoint",  new GeoPoint(mplace.getLatLng().latitude, mplace.getLatLng().longitude));
             post.put("nickname", documentSnapshot.getString("nickname"));
+            post.put("timestamp", ts);
             addPost(post);
             Log.e("!#@","AA" + documentSnapshot.getString("nickname"));
         });

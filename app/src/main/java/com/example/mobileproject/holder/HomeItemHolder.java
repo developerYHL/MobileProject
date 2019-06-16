@@ -2,7 +2,7 @@ package com.example.mobileproject.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,8 +17,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
     public ImageView imageView;
 
-    public Button share;
-    public Button more;
+    public ImageButton commentPost;
+    //public Button more;
 
     public HomeItemHolder(View itemView) {
         super(itemView);
@@ -26,5 +26,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
         contents = (TextView) itemView.findViewById(R.id.contents_text);
 
         imageView = itemView.findViewById(R.id.imageView);
+
+        commentPost = itemView.findViewById(R.id.comment_post_button);
+
     }
 }
