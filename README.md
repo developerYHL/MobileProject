@@ -11,5 +11,4 @@
 - [x]  마커 이미지는 db와 연동해 찍은 사진 띄우기
 
 ## 이미지
-
-![사진1](https://assets.materialup.com/uploads/3bbeda63-3a64-4d9c-8967-797614f9bb1a/preview.png)
+![로그인](https://firebasestorage.googleapis.com/v0/b/mobileproject-e978a.appspot.com/o/preview.png?alt=media&token=8e914104-3126-48e5-bb7c-92dd2cbf6ab9 "Login")
