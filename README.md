@@ -12,5 +12,4 @@
 
 ## 이미지
 
-![석촌호수 러버덕](http://cfile6.uf.tistory.com/image/2426E646543C9B4532C7B0)
-![석촌호수 러버덕](http://cfile6.uf.tistory.com/image/2426E646543C9B4532C7B0 "RubberDuck")
+![사진1](https://assets.materialup.com/uploads/3bbeda63-3a64-4d9c-8967-797614f9bb1a/preview.png)
