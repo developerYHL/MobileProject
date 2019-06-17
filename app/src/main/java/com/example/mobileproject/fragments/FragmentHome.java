@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
+import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.CommentItemHolder;
@@ -41,7 +42,8 @@ public class FragmentHome extends Fragment {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private FirestoreRecyclerAdapter mAdapter;
-    private FirestoreRecyclerAdapter commentAdapter;
+    //private FirestoreRecyclerAdapter commentAdapter;
+    private CommentRecyclerAdapter commentAdapter;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -77,47 +79,30 @@ public class FragmentHome extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
 
-
-        //commentLayout = commentView.findViewById(R.id.comment_layout);
-
         recyclerView.setHasFixedSize(false);
-
-
-
 
         // 레이아웃 매니저로 LinearLayoutManager를 설정
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //GridLayoutManager layoutManager1 = new GridLayoutManager(getActivity(), 2);
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
 
+        recyclerView.setLayoutManager(layoutManager);
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
 
-
-
-
                 if (selectedItems.get(position)) {
-                    //commentAdapter.stopListening();
-
-
                     // 펼쳐진 Item을 클릭 시
-                    Log.e("delete1","delete");
                     selectedItems.delete(position);
                 } else {
-                    //commentAdapter.stopListening();
-
                     // 직전의 클릭됐던 Item의 클릭상태를 지움
-                    Log.e("delete2","delete");
                     selectedItems.delete(prePosition);
+
                     // 클릭한 Item의 position을 저장
                     selectedItems.put(position, true);
                 }
 // 해당 포지션의 변화를 알림
                 if (prePosition != -1) mAdapter.notifyItemChanged(prePosition);
-                mAdapter.notifyItemChanged(position);
+                    mAdapter.notifyItemChanged(position);
 // 클릭된 position 저장
                 prePosition = position;
             }
@@ -126,7 +111,6 @@ public class FragmentHome extends Fragment {
         ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                Log.e("321","!!!");
                 return true;
             }
         });
@@ -143,8 +127,10 @@ public class FragmentHome extends Fragment {
 
         // ValueAnimator.ofInt(int... values)는 View가 변할 값을 지정, 인자는 int 배열
         ValueAnimator va = isExpanded ? ValueAnimator.ofInt(0, height) : ValueAnimator.ofInt(height, 0);
+
         // Animation이 실행되는 시간, n/1000초
         va.setDuration(600);
+
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -157,6 +143,7 @@ public class FragmentHome extends Fragment {
                 commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             }
         });
+
         // Animation start
         va.start();
     }
@@ -167,43 +154,20 @@ public class FragmentHome extends Fragment {
         if(mAdapter != null){
             mAdapter.startListening();
             Log.e("starttest","start11");
-
-
         }
-
-
-        if(commentAdapter != null){
-            Log.e("starttest","start");
-            commentAdapter.startListening();
-        }
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+
+        if(commentAdapter != null){
+            commentAdapter.stopListening();
+        }
     }
 
-//    private void commentQueryData(){
-//        Query query = FirebaseFirestore.getInstance()
-//                .collection("post").document("1560694139")
-//                .collection("comment");
-//
-//        FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
-//                .setQuery(query, CommentItem.class)
-//                .build();
-//
-//
-//        commentAdapter = new CommentRecyclerAdapter(options);
-//
-//
-//        commentRecyclerView.setAdapter(commentAdapter);
-//    }
-
     private void queryData() {
-
-
 
         Query query = FirebaseFirestore.getInstance()
                 .collection("post");
@@ -217,12 +181,7 @@ public class FragmentHome extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-
-
-
-                Log.i("checksom : " , "onBindViewHolder");
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                //model.setPostNum();
                 holder.nickname.setText(model.getNickname());
 
                 Glide.with(holder.itemView)
@@ -237,19 +196,6 @@ public class FragmentHome extends Fragment {
 
                 holder.commentRecyclerView.setHasFixedSize(true);
 
-                db.collection("post").document(model.getTimeStamp())
-                        .collection("comment")
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d("!!!@@@", document.getId() + " => " + document.getData());
-                                }
-                            } else {
-                                Log.d("!!!@@@", "Error getting documents: ", task.getException());
-                            }
-                        });
-
                 Query query = FirebaseFirestore.getInstance()
                         .collection("post").document(model.getTimeStamp())
                         .collection("comment");
@@ -258,38 +204,15 @@ public class FragmentHome extends Fragment {
                         .setQuery(query, CommentItem.class)
                         .build();
 
-
-                commentAdapter = new FirestoreRecyclerAdapter<CommentItem, CommentItemHolder>(options){
-                    @Override
-                    public void onBindViewHolder(CommentItemHolder holder, int position, CommentItem model) {
-                        holder.nickname.setText(model.getNickname());
-                        holder.contents.setText(model.getContents());
-
-                        Log.i("logcomment","aa");
-                        Log.i("logcomment", model.getNickname());
-
-                        holder.itemView.requestLayout();
-                    }
-
-                    @Override
-                    public CommentItemHolder onCreateViewHolder(ViewGroup group, int i) {
-                        // Create a new instance of the ViewHolder, in this case we are using a custom
-                        // layout called R.layout.message for each item
-                        View view = LayoutInflater.from(group.getContext())
-                                .inflate(R.layout.item_comment, group, false);
-
-                        return new CommentItemHolder(view);
-                    }
-                };
-
+                commentAdapter = new CommentRecyclerAdapter(options);
 
                 holder.commentRecyclerView.setAdapter(commentAdapter);
 
-
-                Log.i("checksom1 : " , "holder.commentRecyclerView" + commentAdapter);
+                if(commentAdapter != null){
+                    commentAdapter.startListening();
+                }
 
                 holder.commentPost.setOnClickListener(v -> {
-
 
                     //시간
                     Long tsLong = System.currentTimeMillis()/1000;
@@ -300,7 +223,6 @@ public class FragmentHome extends Fragment {
                     docData.put("timestamp", new Date());
                     docData.put("nickname", model.getNickname());
 
-
                     db.collection("post").document(model.getTimeStamp())
                             .collection("comment").document(ts)
                             .set(docData)
@@ -308,16 +230,7 @@ public class FragmentHome extends Fragment {
                                     Log.d(TAG, "DocumentSnapshot successfully written!"))
                             .addOnFailureListener(e ->
                                     Log.w(TAG, "Error writing document", e));
-
-
                 });
-
-
-
-
-
-                //commentQueryData();
-
                 changeVisibility(selectedItems.get(position));
             }
 
@@ -329,18 +242,9 @@ public class FragmentHome extends Fragment {
                 commentLayout = view.findViewById(R.id.comment_layout);
                 commentEditText = view.findViewById(R.id.comment_edittext);
 
-
-
-                //commentRecyclerView = view.findViewById(R.id.comment_recycler_view);
-
-
-                Log.i("checksom : " , "HomeItemHolder onCreateViewHolder");
-
                 return new HomeItemHolder(view);
             }
         };
-
         recyclerView.setAdapter(mAdapter);
-        Log.i("checksom : " , "recyclerView.setAdapter(mAdapter);");
     }
 }

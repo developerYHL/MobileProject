@@ -90,7 +90,7 @@
                 android:orientation="horizontal"
                 android:weightSum="11"
                 android:layout_below="@+id/comment_recycler_view"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <EditText
                     android:id="@+id/comment_edittext"
