@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,10 +31,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
+import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
+import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -53,6 +56,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +66,8 @@ public class FragmentMyPage extends Fragment {
     //private FirestoreRecyclerAdapter mAdapter;
     private MyPageRecyclerAdapter mAdapter;
     private FirestoreRecyclerAdapter linearAdapter;
+    private CommentRecyclerAdapter commentAdapter;
+
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -80,6 +86,7 @@ public class FragmentMyPage extends Fragment {
     private Button changeGridViewButton;
     private Button changeLinearViewButton;
 
+    private EditText commentEditText;
     private TextView idTextView;
     private ImageView idImageView;
 
@@ -413,23 +420,6 @@ public class FragmentMyPage extends Fragment {
         }
     }
 
-    private void CommentQueryData() {
-
-
-        Query query = FirebaseFirestore.getInstance()
-                .collection("post")
-                .whereEqualTo("uid", mUser.getUid());
-
-        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
-                .setQuery(query, DetailItem.class)
-                .build();
-
-        mAdapter = new com.example.mobileproject.Adapter.MyPageRecyclerAdapter(options) {
-        };
-
-        recyclerView.setAdapter(mAdapter);
-    }
-
     private void queryData() {
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
@@ -489,6 +479,51 @@ public class FragmentMyPage extends Fragment {
                         .placeholder(R.mipmap.ic_launcher)
                         .into(holder.imageView);
 
+
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+
+                holder.contents.setText(model.getContents() + "");
+
+                holder.commentRecyclerView.setLayoutManager(layoutManager);
+
+                holder.commentRecyclerView.setHasFixedSize(true);
+
+                Query query = FirebaseFirestore.getInstance()
+                        .collection("post").document(model.getTimeStamp())
+                        .collection("comment");
+
+                FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
+                        .setQuery(query, CommentItem.class)
+                        .build();
+
+                commentAdapter = new CommentRecyclerAdapter(options);
+
+                holder.commentRecyclerView.setAdapter(commentAdapter);
+
+                if(commentAdapter != null){
+                    commentAdapter.startListening();
+                }
+
+                holder.commentPost.setOnClickListener(v -> {
+
+                    //시간
+                    Long tsLong = System.currentTimeMillis()/1000;
+                    String ts = tsLong.toString();
+
+                    Map<String, Object> docData = new HashMap<>();
+                    docData.put("contents", commentEditText.getText().toString());
+                    docData.put("timestamp", new Date());
+                    docData.put("nickname", model.getNickname());
+
+                    db.collection("post").document(model.getTimeStamp())
+                            .collection("comment").document(ts)
+                            .set(docData)
+                            .addOnSuccessListener(aVoid ->
+                                    Log.d(TAG, "DocumentSnapshot successfully written!"))
+                            .addOnFailureListener(e ->
+                                    Log.w(TAG, "Error writing document", e));
+                });
+
                 changeVisibility(selectedItems.get(position));
             }
 
@@ -498,6 +533,8 @@ public class FragmentMyPage extends Fragment {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
                 CommentLayout = view.findViewById(R.id.comment_layout);
+                commentEditText = view.findViewById(R.id.comment_edittext);
+
                 return new HomeItemHolder(view);
             }
         };

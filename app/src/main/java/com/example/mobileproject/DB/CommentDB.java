@@ -1,8 +1,19 @@
 package com.example.mobileproject.DB;
 
+import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+
+import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
+import com.example.mobileproject.holder.CommentItemHolder;
+import com.example.mobileproject.holder.HomeItemHolder;
+import com.example.mobileproject.model.CommentItem;
+import com.example.mobileproject.model.DetailItem;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class CommentDB {
@@ -31,6 +42,7 @@ public class CommentDB {
                     }
                 });
     }
+
 
 
 }

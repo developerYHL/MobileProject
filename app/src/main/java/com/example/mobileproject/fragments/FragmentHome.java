@@ -1,11 +1,18 @@
 package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -13,15 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
-import com.example.mobileproject.holder.CommentItemHolder;
 import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
@@ -31,7 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.Date;
@@ -60,7 +66,7 @@ public class FragmentHome extends Fragment {
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     // 직전에 클릭됐던 Item의 position
     private int prePosition = -1;
-    private RelativeLayout commentLayout;
+    private LinearLayout commentLayout;
 
     private EditText commentEditText;
 
@@ -123,7 +129,7 @@ public class FragmentHome extends Fragment {
         // height 값을 dp로 지정해서 넣고싶으면 아래 소스를 이용
         int dpValue = 150;
         float d = getActivity().getResources().getDisplayMetrics().density;
-        int height = (int) (dpValue * d);
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;//(int) (dpValue * d);
 
         // ValueAnimator.ofInt(int... values)는 View가 변할 값을 지정, 인자는 int 배열
         ValueAnimator va = isExpanded ? ValueAnimator.ofInt(0, height) : ValueAnimator.ofInt(height, 0);
@@ -181,7 +187,6 @@ public class FragmentHome extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 holder.nickname.setText(model.getNickname());
 
                 Glide.with(holder.itemView)
@@ -190,7 +195,11 @@ public class FragmentHome extends Fragment {
                         .placeholder(R.mipmap.ic_launcher)
                         .into(holder.imageView);
 
-                holder.contents.setText(model.getContents() + "");
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+
+                //holder.contents.setText(model.getContents() + "");
+                setReadMore(holder.contents, model.getContents() + "", 1);
+
 
                 holder.commentRecyclerView.setLayoutManager(layoutManager);
 
@@ -231,6 +240,7 @@ public class FragmentHome extends Fragment {
                             .addOnFailureListener(e ->
                                     Log.w(TAG, "Error writing document", e));
                 });
+
                 changeVisibility(selectedItems.get(position));
             }
 
@@ -240,11 +250,61 @@ public class FragmentHome extends Fragment {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
                 commentLayout = view.findViewById(R.id.comment_layout);
+
                 commentEditText = view.findViewById(R.id.comment_edittext);
 
                 return new HomeItemHolder(view);
             }
         };
         recyclerView.setAdapter(mAdapter);
+    }
+    public static void setReadMore(final TextView view, final String text, final int maxLine) {
+        final Context context = view.getContext();
+        final String expanedText = " ... 더보기";
+
+        if (view.getTag() != null && view.getTag().equals(text)) { //Tag로 전값 의 text를 비교하여똑같으면 실행하지 않음.
+            return;
+        }
+        view.setTag(text); //Tag에 text 저장
+        view.setText(text); // setText를 미리 하셔야  getLineCount()를 호출가능
+        //getLineCount()는 UI 백그라운드에서만 가져올수 있음
+        view.post(() -> {
+            if (view.getLineCount() >= maxLine) { //Line Count가 설정한 MaxLine의 값보다 크다면 처리시작
+
+                int lineEndIndex = view.getLayout().getLineVisibleEnd(maxLine - 1); //Max Line 까지의 text length
+
+
+                String[] split = text.split("\n"); //text를 자름
+                int splitLength = 0;
+
+                String lessText = "";
+                for (String item : split) {
+                    splitLength += item.length() + 1;
+                    if (splitLength >= lineEndIndex) { //마지막 줄일때!
+                        if (item.length() >= expanedText.length()) {
+                            lessText += item.substring(0, item.length() - (expanedText.length())) + expanedText;
+                        } else {
+                            lessText += item + expanedText;
+                        }
+                        break; //종료
+                    }
+                    lessText += item + "\n";
+                }
+                SpannableString spannableString = new SpannableString(lessText);
+                spannableString.setSpan(new ClickableSpan() {//클릭이벤트
+                    @Override
+                    public void onClick(View v) {
+                        view.setText(text);
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) { //컬러 처리
+                        ds.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+                    }
+                }, spannableString.length() - expanedText.length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                view.setText(spannableString);
+                view.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        });
     }
 }
