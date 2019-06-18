@@ -1,7 +1,9 @@
 package com.example.mobileproject.DB;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -13,10 +15,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.R;
+import com.example.mobileproject.holder.HomeItemHolder;
+import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +42,17 @@ public class Comment {
         return instance;
     }
 
+
+    public FirestoreRecyclerOptions<CommentItem> CommentQuery(DetailItem model){
+        Query query = FirebaseFirestore.getInstance()
+                .collection("post").document(model.getTimeStamp())
+                .collection("comment");
+
+        FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
+                .setQuery(query, CommentItem.class)
+                .build();
+        return options;
+    }
 
     public void CommentPost(EditText editText, DetailItem model, FirebaseFirestore db){
         String TAG = "CommentPost";
@@ -124,9 +143,14 @@ public class Comment {
     }
 
 
-    public int CommentOpenButton(SparseBooleanArray selectedItems, int position, int prePosition, FirestoreRecyclerAdapter adapter){
+    public int CommentOpenButton(SparseBooleanArray selectedItems, int position, int prePosition, FirestoreRecyclerAdapter adapter, EditText editText, FragmentActivity context){
+
         if (selectedItems.get(position)) {
             // 펼쳐진 Item을 클릭 시
+
+
+
+
             Log.e("delete1","delete");
             selectedItems.delete(position);
         } else {
@@ -143,6 +167,35 @@ public class Comment {
         prePosition = position;
 
         return prePosition;
+    }
+
+    public void LinearLayoutAdapteronBindViewHolder(HomeItemHolder holder, int position, DetailItem model, FragmentActivity context, CommentRecyclerAdapter commentAdapter){
+        holder.nickname.setText(model.getNickname());
+
+        Glide.with(holder.itemView)
+                .load(model.getDownloadUrl())
+                .centerCrop()
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.imageView);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+
+        //holder.contents.setText(model.getContents() + "");
+        Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
+
+        holder.commentRecyclerView.setLayoutManager(layoutManager);
+
+        holder.commentRecyclerView.setHasFixedSize(true);
+
+        commentAdapter = new CommentRecyclerAdapter(Comment.getInstance().CommentQuery(model));
+
+        holder.commentRecyclerView.setAdapter(commentAdapter);
+
+        if(commentAdapter != null){
+            commentAdapter.startListening();
+        }
+
+
     }
 
 }

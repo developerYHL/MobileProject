@@ -1,6 +1,7 @@
 package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,19 +12,18 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.DB.Comment;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
-import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -119,6 +119,22 @@ public class FragmentHome extends Fragment {
                 commentLayout.requestLayout();
                 // imageView가 실제로 사라지게하는 부분
                 commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+
+                if(isExpanded){
+                    commentEditText.requestFocus();
+//                    new Handler().postDelayed(new Runnable(){
+//                        public void run(){
+//                            InputMethodManager aaa = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                            aaa.showSoftInput(commentEditText,
+//                                    InputMethodManager.SHOW_IMPLICIT);
+//                        }
+//                    }, 100 );
+
+                    InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    //키보드를 띄운다.
+                    inputMethodManager.showSoftInput(commentEditText, 0);
+                }
             }
         });
 
@@ -159,47 +175,20 @@ public class FragmentHome extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                holder.nickname.setText(model.getNickname());
+                Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
 
-                Glide.with(holder.itemView)
-                        .load(model.getDownloadUrl())
-                        .centerCrop()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(holder.imageView);
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-
-                //holder.contents.setText(model.getContents() + "");
-                Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
-
-                holder.commentRecyclerView.setLayoutManager(layoutManager);
-
-                holder.commentRecyclerView.setHasFixedSize(true);
-
-                Query query = FirebaseFirestore.getInstance()
-                        .collection("post").document(model.getTimeStamp())
-                        .collection("comment");
-
-                FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
-                        .setQuery(query, CommentItem.class)
-                        .build();
-
-                commentAdapter = new CommentRecyclerAdapter(options);
-
-                holder.commentRecyclerView.setAdapter(commentAdapter);
-
-                if(commentAdapter != null){
-                    commentAdapter.startListening();
-                }
 
                 //댓글달기 버튼 눌렀을때
                 holder.commentOpenButton.setOnClickListener(v->{
-                    prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter);
+                    prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter, commentEditText, getActivity());
+
+
                 });
 
                 //댓글달기버튼
                 holder.commentPost.setOnClickListener(v -> {
                     Comment.getInstance().CommentPost(commentEditText, model, db);
+
                 });
 
                 changeVisibility(selectedItems.get(position));

@@ -498,7 +498,7 @@ public class FragmentMyPage extends Fragment {
 
                 //댓글달기 버튼 눌렀을때
                 holder.commentOpenButton.setOnClickListener(v->{
-                    prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, linearAdapter);
+                    prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, linearAdapter, commentEditText, getActivity());
 
                 });
 

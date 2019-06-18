@@ -5,7 +5,7 @@ public class DetailItem {
     private String contents;
     private  String downloadUrl;
 
-
+    private String miniProfilImage;
 
     private String timestamp;
 

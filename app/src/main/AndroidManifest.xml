@@ -41,8 +41,7 @@
             android:required="false" />
 
         <activity android:name=".Activity.PostActivity" />
-        <activity android:name=".Activity.MainActivity" android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustPan"
+        <activity android:name=".Activity.MainActivity"
             />
         <activity android:name=".Activity.LoginActivity">
             <intent-filter>
