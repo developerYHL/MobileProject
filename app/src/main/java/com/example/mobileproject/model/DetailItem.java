@@ -7,6 +7,8 @@ public class DetailItem {
 
 
 
+    private String uid;
+
     private String UserProfile;
 
     private String timestamp;
@@ -69,6 +71,13 @@ public class DetailItem {
         UserProfile = userProfile;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("CardItem{");

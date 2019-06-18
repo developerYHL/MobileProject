@@ -175,6 +175,13 @@ public class FragmentHome extends Fragment {
                 // ...
                 Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
 
+                holder.imageButton.setOnClickListener(v->{
+                    if(model.getUid().equals(mUser.getUid()) )
+                        Comment.getInstance().Delete(getActivity());
+                    else{
+                        Log.i("tetet", "tet");
+                    }
+                });
 
                 holder.itemView.setOnClickListener(v ->{
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
