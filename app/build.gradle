@@ -57,12 +57,12 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
 
     //google map
-    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //autoplace
     implementation 'com.google.android.libraries.places:places:1.1.0'
-    implementation 'com.google.android.gms:play-services-places:16.1.0'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
 }
 apply plugin: 'com.google.gms.google-services'
