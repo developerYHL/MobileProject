@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
+import com.example.mobileproject.DB.Comment;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
@@ -77,7 +77,7 @@ public class FragmentMyPage extends Fragment {
 
     private LinearLayout gridItemLayout;
     private LinearLayout linearItemLayout;
-    private RelativeLayout CommentLayout;
+    private LinearLayout commentLayout;
 
     private FirebaseUser mUser;
 
@@ -119,7 +119,7 @@ public class FragmentMyPage extends Fragment {
         recyclerView = view.findViewById(R.id.mypage_grid_recycler_view);
         linearRecyclerView = view.findViewById(R.id.mypage_linear_recycler_view);
         commentRecyclerView = view.findViewById(R.id.comment_recycler_view);
-        CommentLayout = view.findViewById(R.id.comment_layout);
+        commentLayout = view.findViewById(R.id.comment_layout);
 
         changeGridViewButton = view.findViewById(R.id.change_grid_button);
         changeLinearViewButton = view.findViewById(R.id.change_Linear_button);
@@ -373,10 +373,10 @@ public class FragmentMyPage extends Fragment {
                 // value는 height 값
                 int value = (int) animation.getAnimatedValue();
                 // imageView의 높이 변경
-                CommentLayout.getLayoutParams().height = value;
-                CommentLayout.requestLayout();
+                commentLayout.getLayoutParams().height = value;
+                commentLayout.requestLayout();
                 // imageView가 실제로 사라지게하는 부분
-                CommentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+                commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             }
         });
         // Animation start
@@ -482,6 +482,8 @@ public class FragmentMyPage extends Fragment {
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
+                Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
+
                 holder.contents.setText(model.getContents() + "");
 
                 holder.commentRecyclerView.setLayoutManager(layoutManager);
@@ -532,7 +534,8 @@ public class FragmentMyPage extends Fragment {
             public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_detail, viewGroup, false);
-                CommentLayout = view.findViewById(R.id.comment_layout);
+                commentLayout = view.findViewById(R.id.comment_layout);
+
                 commentEditText = view.findViewById(R.id.comment_edittext);
 
                 return new HomeItemHolder(view);

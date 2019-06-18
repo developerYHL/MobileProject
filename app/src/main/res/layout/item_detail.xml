@@ -75,10 +75,24 @@
             android:layout_margin="10dp"
             tools:listitem="@layout/item_comment"
             tools:itemCount="3"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true">
+
+        </android.support.v7.widget.RecyclerView>
 
         <!-- 버튼 -->
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:text="댓글달기" />
+
+        </LinearLayout>
+
+        <LinearLayout
                 android:id="@+id/comment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
