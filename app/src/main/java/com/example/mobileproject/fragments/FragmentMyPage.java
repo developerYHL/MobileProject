@@ -2,6 +2,7 @@ package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,7 +38,6 @@ import com.example.mobileproject.DB.Comment;
 import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
-import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -152,7 +153,7 @@ public class FragmentMyPage extends Fragment {
                 linearParams.weight = 0f;
                 linearItemLayout.setLayoutParams(linearParams);
 
-                gridParams.weight = 1f;
+                gridParams.weight = 8f;
                 gridItemLayout.setLayoutParams(gridParams);
 
                 gridItemLayout.setVisibility(View.VISIBLE);
@@ -163,7 +164,7 @@ public class FragmentMyPage extends Fragment {
         changeLinearViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                linearParams.weight = 1f;
+                linearParams.weight = 8f;
                 linearItemLayout.setLayoutParams(linearParams);
 
                 gridParams.weight = 0f;
@@ -365,8 +366,18 @@ public class FragmentMyPage extends Fragment {
                 commentLayout.requestLayout();
                 // imageView가 실제로 사라지게하는 부분
                 commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+
+                if(isExpanded == true){
+                    commentEditText.requestFocus();
+
+                    InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    //키보드를 띄운다.
+                    inputMethodManager.showSoftInput(commentEditText, 0);
+                }
             }
         });
+
+
         // Animation start
         va.start();
     }
@@ -459,38 +470,7 @@ public class FragmentMyPage extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
-                holder.nickname.setText(model.getNickname());
-                holder.contents.setText(model.getContents() + "");
-                //Log.e("log",model.getTimeStamp());
-
-                Glide.with(holder.itemView)
-                        .load(model.getDownloadUrl())
-                        .centerCrop()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(holder.imageView);
-
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-
-                Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
-
-                holder.contents.setText(model.getContents() + "");
-
-                holder.commentRecyclerView.setLayoutManager(layoutManager);
-
-                holder.commentRecyclerView.setHasFixedSize(true);
-
-                Query query = FirebaseFirestore.getInstance()
-                        .collection("post").document(model.getTimeStamp())
-                        .collection("comment");
-
-                FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
-                        .setQuery(query, CommentItem.class)
-                        .build();
-
-                commentAdapter = new CommentRecyclerAdapter(options);
-
-                holder.commentRecyclerView.setAdapter(commentAdapter);
+                Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
 
                 if(commentAdapter != null){
                     commentAdapter.startListening();

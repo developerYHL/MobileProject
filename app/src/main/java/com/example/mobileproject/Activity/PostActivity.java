@@ -122,7 +122,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         //카메라 실행
         findViewById(R.id.camera).setOnClickListener(v -> {
             // Firebase에 추가
-            listItems = new String[]{"사진 촬영", "엘범에서 선택"};
+            listItems = new String[]{"사진 촬영", "앨범에서 선택"};
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(PostActivity.this);
             mBuilder.setTitle("촬영");
             mBuilder.setIcon(R.drawable.icon);

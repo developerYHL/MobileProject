@@ -12,6 +12,7 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -148,7 +149,9 @@ public class Comment {
         if (selectedItems.get(position)) {
             // 펼쳐진 Item을 클릭 시
 
+            InputMethodManager immhide = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+            immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
 
             Log.e("delete1","delete");

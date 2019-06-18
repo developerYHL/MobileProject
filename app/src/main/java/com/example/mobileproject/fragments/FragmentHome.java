@@ -120,20 +120,15 @@ public class FragmentHome extends Fragment {
                 // imageView가 실제로 사라지게하는 부분
                 commentLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
 
-                if(isExpanded){
+                if(isExpanded == true){
                     commentEditText.requestFocus();
-//                    new Handler().postDelayed(new Runnable(){
-//                        public void run(){
-//                            InputMethodManager aaa = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                            aaa.showSoftInput(commentEditText,
-//                                    InputMethodManager.SHOW_IMPLICIT);
-//                        }
-//                    }, 100 );
 
                     InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
                     //키보드를 띄운다.
                     inputMethodManager.showSoftInput(commentEditText, 0);
+                    Log.i("testtest ", "test" + isExpanded);
+                }else{
+
                 }
             }
         });
@@ -182,16 +177,16 @@ public class FragmentHome extends Fragment {
                 holder.commentOpenButton.setOnClickListener(v->{
                     prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter, commentEditText, getActivity());
 
-
                 });
 
-                //댓글달기버튼
+                //댓글전송
                 holder.commentPost.setOnClickListener(v -> {
                     Comment.getInstance().CommentPost(commentEditText, model, db);
 
                 });
 
                 changeVisibility(selectedItems.get(position));
+
             }
 
             @NonNull
