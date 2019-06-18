@@ -459,7 +459,8 @@ public class FragmentMyPage extends Fragment {
 
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
-                .whereEqualTo("uid", mUser.getUid());
+                .whereEqualTo("uid", mUser.getUid())
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
                 .setQuery(query, DetailItem.class)

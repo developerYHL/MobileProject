@@ -160,7 +160,8 @@ public class FragmentHome extends Fragment {
     private void queryData() {
 
         Query query = FirebaseFirestore.getInstance()
-                .collection("post");
+                .collection("post")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
                 .setQuery(query, DetailItem.class)
