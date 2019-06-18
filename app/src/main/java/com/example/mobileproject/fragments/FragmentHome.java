@@ -87,21 +87,6 @@ public class FragmentHome extends Fragment {
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerView, position, v) -> {
 
-            if (selectedItems.get(position)) {
-                // 펼쳐진 Item을 클릭 시
-                selectedItems.delete(position);
-            } else {
-                // 직전의 클릭됐던 Item의 클릭상태를 지움
-                selectedItems.delete(prePosition);
-
-                // 클릭한 Item의 position을 저장
-                selectedItems.put(position, true);
-            }
-// 해당 포지션의 변화를 알림
-            if (prePosition != -1) mAdapter.notifyItemChanged(prePosition);
-                mAdapter.notifyItemChanged(position);
-// 클릭된 position 저장
-            prePosition = position;
 
         });
 
@@ -211,6 +196,27 @@ public class FragmentHome extends Fragment {
                     commentAdapter.startListening();
                 }
 
+                //댓글달기 버튼 눌렀을때
+                holder.commentOpenButton.setOnClickListener(v->{
+                    if (selectedItems.get(position)) {
+                        // 펼쳐진 Item을 클릭 시
+                        Log.e("delete1","delete");
+                        selectedItems.delete(position);
+                    } else {
+                        // 직전의 클릭됐던 Item의 클릭상태를 지움
+                        Log.e("delete2","delete");
+                        selectedItems.delete(prePosition);
+                        // 클릭한 Item의 position을 저장
+                        selectedItems.put(position, true);
+                    }
+                    // 해당 포지션의 변화를 알림
+                    if (prePosition != -1) mAdapter.notifyItemChanged(prePosition);
+                    mAdapter.notifyItemChanged(position);
+                    // 클릭된 position 저장
+                    prePosition = position;
+                });
+
+                //댓글달기버튼
                 holder.commentPost.setOnClickListener(v -> {
 
                     //시간

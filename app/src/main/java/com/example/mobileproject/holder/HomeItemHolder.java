@@ -2,6 +2,7 @@ package com.example.mobileproject.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
     public ImageView imageView;
 
     public ImageButton commentPost;
+    public Button commentOpenButton;
+
     public RecyclerView commentRecyclerView;
 
     //public Button more;
@@ -29,6 +32,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
         imageView = itemView.findViewById(R.id.imageView);
         commentPost = itemView.findViewById(R.id.comment_post_button);
+
+        commentOpenButton = itemView.findViewById(R.id.comment_open_button);
 
         commentRecyclerView = itemView.findViewById(R.id.comment_recycler_view);
     }

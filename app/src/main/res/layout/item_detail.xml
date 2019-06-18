@@ -86,6 +86,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/comment_open_button"
                 android:layout_width="52dp"
                 android:layout_height="match_parent"
                 android:text="댓글달기" />

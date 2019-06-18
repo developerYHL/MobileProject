@@ -68,6 +68,8 @@ public class FragmentMyPage extends Fragment {
     private FirestoreRecyclerAdapter linearAdapter;
     private CommentRecyclerAdapter commentAdapter;
 
+    private com.example.mobileproject.Adapter.FirestoreRecyclerAdapter.MyRecyclerViewClickListener mListener;
+
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -87,6 +89,8 @@ public class FragmentMyPage extends Fragment {
     private Button changeLinearViewButton;
 
     private EditText commentEditText;
+    private Button commentOpenButton;
+
     private TextView idTextView;
     private ImageView idImageView;
 
@@ -189,22 +193,7 @@ public class FragmentMyPage extends Fragment {
         ItemClickSupport.addTo(linearRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                if (selectedItems.get(position)) {
-                    // 펼쳐진 Item을 클릭 시
-                    Log.e("delete1","delete");
-                    selectedItems.delete(position);
-                } else {
-                    // 직전의 클릭됐던 Item의 클릭상태를 지움
-                    Log.e("delete2","delete");
-                    selectedItems.delete(prePosition);
-                    // 클릭한 Item의 position을 저장
-                    selectedItems.put(position, true);
-                }
-// 해당 포지션의 변화를 알림
-                if (prePosition != -1) linearAdapter.notifyItemChanged(prePosition);
-                linearAdapter.notifyItemChanged(position);
-// 클릭된 position 저장
-                prePosition = position;
+
             }
         });
 
@@ -456,6 +445,8 @@ public class FragmentMyPage extends Fragment {
     }
 
     private void LinearQueryData() {
+
+
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
                 .whereEqualTo("uid", mUser.getUid());
@@ -506,6 +497,26 @@ public class FragmentMyPage extends Fragment {
                     commentAdapter.startListening();
                 }
 
+                //댓글달기 버튼 눌렀을때
+                holder.commentOpenButton.setOnClickListener(v->{
+                    if (selectedItems.get(position)) {
+                        // 펼쳐진 Item을 클릭 시
+                        Log.e("delete1","delete");
+                        selectedItems.delete(position);
+                    } else {
+                        // 직전의 클릭됐던 Item의 클릭상태를 지움
+                        Log.e("delete2","delete");
+                        selectedItems.delete(prePosition);
+                        // 클릭한 Item의 position을 저장
+                        selectedItems.put(position, true);
+                    }
+                    // 해당 포지션의 변화를 알림
+                    if (prePosition != -1) linearAdapter.notifyItemChanged(prePosition);
+                    linearAdapter.notifyItemChanged(position);
+                    // 클릭된 position 저장
+                    prePosition = position;
+                });
+
                 holder.commentPost.setOnClickListener(v -> {
 
                     //시간
@@ -540,11 +551,19 @@ public class FragmentMyPage extends Fragment {
 
                 return new HomeItemHolder(view);
             }
+
+
+
+
         };
+
+
 
         linearRecyclerView.setAdapter(linearAdapter);
     }
 }
+
+
 
 class SpacesItemDecoration extends RecyclerView.ItemDecoration {
     private int space;
