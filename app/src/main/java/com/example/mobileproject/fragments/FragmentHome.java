@@ -276,7 +276,7 @@ public class FragmentHome extends Fragment {
             int end = view.getLayout().getLineEnd(line);
             CharSequence substring = view.getText().subSequence(start, end);
             lines.add(substring);
-            Log.i("linesdd",substring + "");
+            Log.i("linesdd",lines.size() + "");
             Log.i("linesdd","asd");
 
         }
@@ -291,20 +291,21 @@ public class FragmentHome extends Fragment {
 
 
                     String[] split = text.split("\n"); //text를 자름
-                    int splitLength = 0;
+                    int itemCount = 0;
 
                     String lessText = "";
-                    for (String item : split) {
-                        splitLength += item.length() + 1;
-                        if (splitLength >= lineEndIndex) { //마지막 줄일때!
-                            if (item.length() >= expanedText.length()) {
-                                lessText += item.substring(0, item.length() - (expanedText.length())) + expanedText;
+                    for (CharSequence item : lines) {
+                        String items = item.toString();
+                        itemCount ++;
+                        if (itemCount >= lines.size()) { //마지막 줄일때!
+                            if (items.length() >= expanedText.length()) {
+                                lessText += items.substring(0, items.length() - (expanedText.length())) + expanedText;
                             } else {
-                                lessText += item + expanedText;
+                                lessText += items + expanedText;
                             }
                             break; //종료
                         }
-                        lessText += item + "\n";
+                        lessText += items + "\n";
                     }
                     SpannableString spannableString = new SpannableString(lessText);
                     spannableString.setSpan(new ClickableSpan() {//클릭이벤트
