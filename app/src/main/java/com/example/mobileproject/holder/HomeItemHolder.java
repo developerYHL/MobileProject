@@ -23,6 +23,7 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
     public RecyclerView commentRecyclerView;
 
+    public ImageView userProfile;
     //public Button more;
 
     public HomeItemHolder(View itemView) {
@@ -31,6 +32,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
         contents = (TextView) itemView.findViewById(R.id.contents_text);
 
         imageView = itemView.findViewById(R.id.imageView);
+        userProfile = itemView.findViewById(R.id.miniprofil_imageview);
+
         commentPost = itemView.findViewById(R.id.comment_post_button);
 
         commentOpenButton = itemView.findViewById(R.id.comment_open_button);

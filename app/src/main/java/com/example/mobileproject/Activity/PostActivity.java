@@ -408,12 +408,10 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             post.put("geopoint",  new GeoPoint(mplace.getLatLng().latitude, mplace.getLatLng().longitude));
             post.put("nickname", documentSnapshot.getString("nickname"));
             post.put("timestamp", ts);
+            post.put("UserProfile", documentSnapshot.getString("downloadUrl"));
+
             addPost(post);
             Log.e("!#@","AA" + documentSnapshot.getString("nickname"));
         });
-
-
-
-
     }
 }

@@ -47,7 +47,8 @@ public class Comment {
     public FirestoreRecyclerOptions<CommentItem> CommentQuery(DetailItem model){
         Query query = FirebaseFirestore.getInstance()
                 .collection("post").document(model.getTimeStamp())
-                .collection("comment");
+                .collection("comment")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
                 .setQuery(query, CommentItem.class)
@@ -55,7 +56,7 @@ public class Comment {
         return options;
     }
 
-    public void CommentPost(EditText editText, DetailItem model, FirebaseFirestore db){
+    public void CommentPost(EditText editText, DetailItem model, FirebaseFirestore db, CommentRecyclerAdapter adapter){
         String TAG = "CommentPost";
         //시간
         Long tsLong = System.currentTimeMillis()/1000;
@@ -71,6 +72,7 @@ public class Comment {
                 .set(docData)
                 .addOnSuccessListener(aVoid -> {
                     editText.setText("");
+//                    adapter.notifyDataSetChanged();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
                 })
                 .addOnFailureListener(e ->
@@ -157,6 +159,8 @@ public class Comment {
             Log.e("delete1","delete");
             selectedItems.delete(position);
         } else {
+
+
             // 직전의 클릭됐던 Item의 클릭상태를 지움
             Log.e("delete2","delete");
             selectedItems.delete(prePosition);
@@ -174,6 +178,12 @@ public class Comment {
 
     public void LinearLayoutAdapteronBindViewHolder(HomeItemHolder holder, int position, DetailItem model, FragmentActivity context, CommentRecyclerAdapter commentAdapter){
         holder.nickname.setText(model.getNickname());
+
+        Glide.with(holder.itemView)
+                .load(model.getUserProfile())
+                .centerCrop()
+                .placeholder(R.mipmap.ic_launcher)
+                .into(holder.userProfile);
 
         Glide.with(holder.itemView)
                 .load(model.getDownloadUrl())

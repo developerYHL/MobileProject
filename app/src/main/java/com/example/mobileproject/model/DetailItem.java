@@ -5,9 +5,12 @@ public class DetailItem {
     private String contents;
     private  String downloadUrl;
 
-    private String miniProfilImage;
+
+
+    private String UserProfile;
 
     private String timestamp;
+
 
     public DetailItem(){
 
@@ -56,6 +59,14 @@ public class DetailItem {
 
     public void setTimeStamp(String postNum) {
         this.timestamp = postNum;
+    }
+
+    public String getUserProfile() {
+        return UserProfile;
+    }
+
+    public void setUserProfile(String userProfile) {
+        UserProfile = userProfile;
     }
 
     @Override

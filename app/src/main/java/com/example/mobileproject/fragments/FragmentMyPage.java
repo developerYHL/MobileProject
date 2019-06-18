@@ -484,7 +484,7 @@ public class FragmentMyPage extends Fragment {
 
                 //댓글 전송
                 holder.commentPost.setOnClickListener(v -> {
-                    Comment.getInstance().CommentPost(commentEditText, model, db);
+                    Comment.getInstance().CommentPost(commentEditText, model, db, commentAdapter);
                 });
 
                 changeVisibility(selectedItems.get(position));
