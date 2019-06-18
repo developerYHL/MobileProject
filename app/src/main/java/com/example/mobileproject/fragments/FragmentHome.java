@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -45,6 +46,8 @@ public class FragmentHome extends Fragment {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private RecyclerView recyclerView;
     private RecyclerView commentRecyclerView;
+
+    private ViewPager viewPager;
 
     private ImageView mPreviewImageView;
 
@@ -175,6 +178,15 @@ public class FragmentHome extends Fragment {
                 // ...
                 Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
 
+                holder.titleLayout.setOnClickListener(v->{
+                    FragmentHome fragment = new FragmentHome();
+                    Bundle args = new Bundle();
+                    args.putString("uid", model.getUid());
+                    fragment.setArguments(args);
+
+                    viewPager.setCurrentItem(1);
+                });
+
                 holder.imageButton.setOnClickListener(v->{
                     if(model.getUid().equals(mUser.getUid()) )
                         Comment.getInstance().Delete(getActivity(), db, model);
@@ -211,6 +223,12 @@ public class FragmentHome extends Fragment {
                 commentLayout = view.findViewById(R.id.comment_layout);
 
                 commentEditText = view.findViewById(R.id.comment_edittext);
+
+                View view1 = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.activity_main, viewGroup, false);
+                viewPager = view1.findViewById(R.id.view_pager);
+
+
 
                 return new HomeItemHolder(view);
             }

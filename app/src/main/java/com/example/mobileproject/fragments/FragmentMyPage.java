@@ -191,6 +191,7 @@ public class FragmentMyPage extends Fragment{
                         dispatchTakePictureIntent();
                     }else if(which == 1) {
                         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        //유저가 아니면 실행하면 안됨
                         startActivityForResult(i, REQUEST_IMAGE_GALLAY);
                     }else {
                         deleteDb();
@@ -209,9 +210,9 @@ public class FragmentMyPage extends Fragment{
             mDialog.show();
         });
 
-        showID();
-        queryData();
-        LinearQueryData();
+        showID(mUser);
+        queryData(mUser);
+        LinearQueryData(mUser);
         return view;
     }
 
@@ -392,7 +393,7 @@ public class FragmentMyPage extends Fragment{
         }
     }
 
-    private  void showID(){
+    private  void showID(FirebaseUser mUser){
         FirebaseFirestore db;
         db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("User").document(mUser.getUid());
@@ -412,7 +413,7 @@ public class FragmentMyPage extends Fragment{
 
     }
 
-    private void queryData() {
+    private void queryData(FirebaseUser mUser) {
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
                 .whereEqualTo("uid", mUser.getUid());
@@ -457,7 +458,7 @@ public class FragmentMyPage extends Fragment{
 
 
 
-    private void LinearQueryData() {
+    private void LinearQueryData(FirebaseUser mUser) {
 
 
         Query query = FirebaseFirestore.getInstance()

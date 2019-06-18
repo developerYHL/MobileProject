@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.mobileproject.R;
@@ -27,6 +28,8 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
     public ImageButton imageButton;
 
     public ImageView userProfile;
+
+    public LinearLayout titleLayout;
     //public Button more;
 
     public HomeItemHolder(View itemView) {
@@ -45,5 +48,7 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
         commentRecyclerView = itemView.findViewById(R.id.comment_recycler_view);
 
         imageButton = itemView.findViewById(R.id.imageButton);
+
+        titleLayout = itemView.findViewById(R.id.title_layout);
     }
 }
