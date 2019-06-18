@@ -40,8 +40,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FragmentHome extends Fragment {
@@ -265,46 +267,60 @@ public class FragmentHome extends Fragment {
         if (view.getTag() != null && view.getTag().equals(text)) { //Tag로 전값 의 text를 비교하여똑같으면 실행하지 않음.
             return;
         }
-        view.setTag(text); //Tag에 text 저장
+
+
+        List<CharSequence> lines = new ArrayList<>();
+        int count = view.getLineCount();
+        for (int line = 0; line < count; line++) {
+            int start = view.getLayout().getLineStart(line);
+            int end = view.getLayout().getLineEnd(line);
+            CharSequence substring = view.getText().subSequence(start, end);
+            lines.add(substring);
+            Log.i("linesdd",substring + "");
+            Log.i("linesdd","asd");
+
+        }
+
+            view.setTag(text); //Tag에 text 저장
         view.setText(text); // setText를 미리 하셔야  getLineCount()를 호출가능
-        //getLineCount()는 UI 백그라운드에서만 가져올수 있음
-        view.post(() -> {
-            if (view.getLineCount() >= maxLine) { //Line Count가 설정한 MaxLine의 값보다 크다면 처리시작
+            //getLineCount()는 UI 백그라운드에서만 가져올수 있음
+            view.post(() -> {
+                if (view.getLineCount() >= maxLine) { //Line Count가 설정한 MaxLine의 값보다 크다면 처리시작
 
-                int lineEndIndex = view.getLayout().getLineVisibleEnd(maxLine - 1); //Max Line 까지의 text length
+                    int lineEndIndex = view.getLayout().getLineVisibleEnd(maxLine - 1); //Max Line 까지의 text length
 
 
-                String[] split = text.split("\n"); //text를 자름
-                int splitLength = 0;
+                    String[] split = text.split("\n"); //text를 자름
+                    int splitLength = 0;
 
-                String lessText = "";
-                for (String item : split) {
-                    splitLength += item.length() + 1;
-                    if (splitLength >= lineEndIndex) { //마지막 줄일때!
-                        if (item.length() >= expanedText.length()) {
-                            lessText += item.substring(0, item.length() - (expanedText.length())) + expanedText;
-                        } else {
-                            lessText += item + expanedText;
+                    String lessText = "";
+                    for (String item : split) {
+                        splitLength += item.length() + 1;
+                        if (splitLength >= lineEndIndex) { //마지막 줄일때!
+                            if (item.length() >= expanedText.length()) {
+                                lessText += item.substring(0, item.length() - (expanedText.length())) + expanedText;
+                            } else {
+                                lessText += item + expanedText;
+                            }
+                            break; //종료
                         }
-                        break; //종료
+                        lessText += item + "\n";
                     }
-                    lessText += item + "\n";
-                }
-                SpannableString spannableString = new SpannableString(lessText);
-                spannableString.setSpan(new ClickableSpan() {//클릭이벤트
-                    @Override
-                    public void onClick(View v) {
-                        view.setText(text);
-                    }
+                    SpannableString spannableString = new SpannableString(lessText);
+                    spannableString.setSpan(new ClickableSpan() {//클릭이벤트
+                        @Override
+                        public void onClick(View v) {
+                            view.setText(text);
+                        }
 
-                    @Override
-                    public void updateDrawState(TextPaint ds) { //컬러 처리
-                        ds.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
-                    }
-                }, spannableString.length() - expanedText.length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                view.setText(spannableString);
-                view.setMovementMethod(LinkMovementMethod.getInstance());
-            }
-        });
+                        @Override
+                        public void updateDrawState(TextPaint ds) { //컬러 처리
+                            ds.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+                        }
+                    }, spannableString.length() - expanedText.length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    view.setText(spannableString);
+                    view.setMovementMethod(LinkMovementMethod.getInstance());
+                }
+            });
     }
 }
