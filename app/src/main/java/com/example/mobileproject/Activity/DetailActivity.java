@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
@@ -75,7 +77,7 @@ public class DetailActivity extends AppCompatActivity {
     RecyclerView commentRecyclerView;
     EditText editText;
     ImageButton comment_post_button;
-
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,7 @@ public class DetailActivity extends AppCompatActivity {
         editText = findViewById(R.id.comment_edittext);
         comment_post_button = findViewById(R.id.comment_post_button);
         commentEditText = findViewById(R.id.comment_edittext);
+        imageButton = findViewById(R.id.imageButton);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -120,6 +123,8 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         timeStamp = intent.getExtras().getString("time");
+
+
 
 
         DocumentReference docRef = db.collection("User").document(mUser.getUid());
@@ -152,6 +157,7 @@ public class DetailActivity extends AppCompatActivity {
                                     .addOnFailureListener(e ->
                                             Log.w(TAG, "Error writing document", e));
                         });
+
 
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
@@ -239,6 +245,83 @@ public class DetailActivity extends AppCompatActivity {
                         if(commentAdapter != null){
                             commentAdapter.startListening();
                         }
+
+
+                        imageButton.setOnClickListener(v->{
+                            if(document.getString("uid").equals(mUser.getUid())){
+
+
+                                String TAG = "Delete";
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        context);
+
+                                // 제목셋팅
+                                alertDialogBuilder.setTitle("게시물을 삭제");
+
+                                // AlertDialog 셋팅
+                                alertDialogBuilder
+                                        .setMessage("게시물을 삭제")
+                                        .setCancelable(false);
+
+                                alertDialogBuilder
+                                        .setMessage("게시물을 삭제하시겠습니까?")
+                                        .setCancelable(false)
+                                        .setPositiveButton("삭제",
+                                                (dialog, id) ->
+                                                        db.collection("post").document(document.getString("timestamp"))
+                                                                .delete()
+                                                                .addOnSuccessListener(aVoid ->{
+                                                                    Toast.makeText(context, "삭제했습니다.", Toast.LENGTH_SHORT).show();
+                                                                    finish();
+                                                                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                                })
+                                                                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e)))
+                                        .setNegativeButton("취소",
+                                                (dialog, id) -> {
+                                                    // 다이얼로그를 취소한다
+                                                    dialog.cancel();
+                                                });
+
+                                // 다이얼로그 생성
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                                // 다이얼로그 보여주기
+                                alertDialog.show();
+                            }
+
+
+
+                            else{
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        context);
+
+                                // 제목셋팅
+                                alertDialogBuilder.setTitle("게시물을 삭제");
+
+                                // AlertDialog 셋팅
+                                alertDialogBuilder
+                                        .setMessage("게시물을 삭제")
+                                        .setCancelable(false);
+
+                                alertDialogBuilder
+                                        .setMessage("권한이 없습니다.")
+                                        .setCancelable(false)
+
+                                        .setNegativeButton("확인.",
+                                                (dialog, id) -> {
+                                                    // 다이얼로그를 취소한다
+                                                    dialog.cancel();
+                                                });
+
+
+                                // 다이얼로그 생성
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                                // 다이얼로그 보여주기
+                                alertDialog.show();
+                            }
+                        });
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d(TAG, "No such document");

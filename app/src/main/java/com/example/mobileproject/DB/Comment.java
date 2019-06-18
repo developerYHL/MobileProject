@@ -1,7 +1,6 @@
 package com.example.mobileproject.DB;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
@@ -216,7 +216,9 @@ public class Comment {
 
     }
 
-    public void Delete(FragmentActivity context){
+    public void Delete(FragmentActivity context, FirebaseFirestore db, DetailItem model){
+        String TAG = "Delete";
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 context);
 
@@ -232,20 +234,51 @@ public class Comment {
                 .setMessage("게시물을 삭제하시겠습니까?")
                 .setCancelable(false)
                 .setPositiveButton("삭제",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
-
-                            }
-                        })
+                        (dialog, id) ->
+                                db.collection("post").document(model.getTimeStamp())
+                                .delete()
+                                .addOnSuccessListener(aVoid ->{
+                                    Toast.makeText(context, "삭제했습니다.", Toast.LENGTH_SHORT).show();
+                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                        })
+                                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e)))
                 .setNegativeButton("취소",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
-                                // 다이얼로그를 취소한다
-                                dialog.cancel();
-                            }
+                        (dialog, id) -> {
+                            // 다이얼로그를 취소한다
+                            dialog.cancel();
                         });
+
+        // 다이얼로그 생성
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // 다이얼로그 보여주기
+        alertDialog.show();
+    }
+
+    public void PermissionDenied(FragmentActivity context){
+        String TAG = "Delete";
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        // 제목셋팅
+        alertDialogBuilder.setTitle("게시물을 삭제");
+
+        // AlertDialog 셋팅
+        alertDialogBuilder
+                .setMessage("게시물을 삭제")
+                .setCancelable(false);
+
+        alertDialogBuilder
+                .setMessage("권한이 없습니다.")
+                .setCancelable(false)
+
+                .setNegativeButton("확인.",
+                        (dialog, id) -> {
+                            // 다이얼로그를 취소한다
+                            dialog.cancel();
+                        });
+
 
         // 다이얼로그 생성
         AlertDialog alertDialog = alertDialogBuilder.create();

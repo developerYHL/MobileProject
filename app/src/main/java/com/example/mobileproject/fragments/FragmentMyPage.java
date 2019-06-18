@@ -482,9 +482,9 @@ public class FragmentMyPage extends Fragment{
 
                 holder.imageButton.setOnClickListener(v->{
                     if(model.getUid().equals(mUser.getUid()) )
-                        Comment.getInstance().Delete(getActivity());
+                        Comment.getInstance().Delete(getActivity(), db, model);
                     else{
-                        Log.i("tetet", "tet");
+                        Comment.getInstance().PermissionDenied(getActivity());
                     }
                 });
 
