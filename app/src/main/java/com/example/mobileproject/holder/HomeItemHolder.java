@@ -15,6 +15,7 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
 
     public TextView nickname;
     public TextView contents;
+    public TextView contentsUserNickname;
 
     public ImageView imageView;
 
@@ -30,6 +31,7 @@ public class HomeItemHolder extends RecyclerView.ViewHolder {
         super(itemView);
         nickname = (TextView) itemView.findViewById(R.id.title_text);
         contents = (TextView) itemView.findViewById(R.id.contents_text);
+        contentsUserNickname = itemView.findViewById(R.id.contents_user_text);
 
         imageView = itemView.findViewById(R.id.imageView);
         userProfile = itemView.findViewById(R.id.miniprofil_imageview);

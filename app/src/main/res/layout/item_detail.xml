@@ -62,15 +62,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/contents_user_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:text="UserId"/>
 
             <!-- 내용 -->
             <TextView
                 android:id="@+id/contents_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:padding="10dp"
                 android:textColor="#000000"
+                android:textSize="16dp"
                 android:text="Contents"/>
 
 

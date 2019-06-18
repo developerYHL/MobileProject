@@ -179,6 +179,8 @@ public class Comment {
     public void LinearLayoutAdapteronBindViewHolder(HomeItemHolder holder, int position, DetailItem model, FragmentActivity context, CommentRecyclerAdapter commentAdapter){
         holder.nickname.setText(model.getNickname());
 
+        holder.contentsUserNickname.setText(model.getNickname());
+
         Glide.with(holder.itemView)
                 .load(model.getUserProfile())
                 .centerCrop()
