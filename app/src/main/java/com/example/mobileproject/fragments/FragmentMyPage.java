@@ -218,7 +218,7 @@ public class FragmentMyPage extends Fragment {
 
         idImageView.setOnClickListener(v -> {
             // Firebase에 추가
-            listItems = new String[]{"사진 촬영", "엘범에서 선택", "기본 이미지"};
+            listItems = new String[]{"사진 촬영", "앨범에서 선택", "기본 이미지"};
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
             mBuilder.setTitle("촬영");
             mBuilder.setIcon(R.drawable.icon);
