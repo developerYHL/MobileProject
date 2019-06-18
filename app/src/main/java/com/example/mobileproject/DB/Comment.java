@@ -193,10 +193,11 @@ public class Comment {
                 .placeholder(R.mipmap.ic_launcher)
                 .into(holder.imageView);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
         //holder.contents.setText(model.getContents() + "");
         Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
         holder.commentRecyclerView.setLayoutManager(layoutManager);
 

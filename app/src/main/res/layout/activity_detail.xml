@@ -48,7 +48,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="200dp">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -89,7 +89,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -97,11 +97,16 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/comment_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="10dp"
-                tools:listitem="@layout/item_comment"
-                android:layout_weight="9">
+                android:layout_width="386dp"
+                android:layout_height="271dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                tools:listitem="@layout/item_comment">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -112,8 +117,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight="1"
                 android:weightSum="11"
+                android:layout_alignParentBottom="true"
                 android:visibility="visible">
 
                 <EditText
@@ -121,6 +126,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:maxLines="4"
+                    android:background="#ffffff"
                     android:layout_weight="9">
 
                     <requestFocus />
@@ -136,7 +142,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>

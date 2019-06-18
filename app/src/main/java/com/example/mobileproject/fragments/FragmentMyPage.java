@@ -31,13 +31,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.mobileproject.Activity.DetailActivity;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.Adapter.MyPageRecyclerAdapter;
 import com.example.mobileproject.DB.Comment;
-import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
+import com.example.mobileproject.holder.SinglePictureHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -60,7 +61,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FragmentMyPage extends Fragment {
+public class FragmentMyPage extends Fragment{
 
     private static final String TAG = MainActivity.class.getSimpleName();
     //private FirestoreRecyclerAdapter mAdapter;
@@ -175,35 +176,7 @@ public class FragmentMyPage extends Fragment {
             }
         });
 
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                Log.e("123","???");
-            }
-        });
 
-        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                Log.e("321","!!!");
-                return true;
-            }
-        });
-
-        ItemClickSupport.addTo(linearRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener(){
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-            }
-        });
-
-        ItemClickSupport.addTo(linearRecyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                Log.e("321","!!!");
-                return true;
-            }
-        });
 
         idImageView.setOnClickListener(v -> {
             // Firebase에 추가
@@ -419,21 +392,6 @@ public class FragmentMyPage extends Fragment {
         }
     }
 
-    private void queryData() {
-        Query query = FirebaseFirestore.getInstance()
-                .collection("post")
-                .whereEqualTo("uid", mUser.getUid());
-
-        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
-                .setQuery(query, DetailItem.class)
-                .build();
-
-        mAdapter = new com.example.mobileproject.Adapter.MyPageRecyclerAdapter(options) {
-        };
-
-        recyclerView.setAdapter(mAdapter);
-    }
-
     private  void showID(){
         FirebaseFirestore db;
         db = FirebaseFirestore.getInstance();
@@ -453,6 +411,51 @@ public class FragmentMyPage extends Fragment {
         });
 
     }
+
+    private void queryData() {
+        Query query = FirebaseFirestore.getInstance()
+                .collection("post")
+                .whereEqualTo("uid", mUser.getUid());
+
+        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
+                .setQuery(query, DetailItem.class)
+                .build();
+
+
+
+        mAdapter = new com.example.mobileproject.Adapter.MyPageRecyclerAdapter(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull SinglePictureHolder holder, int position, DetailItem model) {
+                super.onBindViewHolder(holder, position, model);
+
+                Glide.with(holder.itemView)
+                        .load(model.getDownloadUrl())
+                        .centerCrop()
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(holder.imageView);
+                holder.itemView.requestLayout();
+
+                holder.itemView.setOnClickListener(v ->{
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    intent.putExtra("time", model.getTimeStamp());
+                    startActivityForResult(intent,1001);
+                });
+            }
+
+            @NonNull
+            @Override
+            public SinglePictureHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_picture, viewGroup, false);
+
+                return new SinglePictureHolder(view);
+            }
+        };
+
+        recyclerView.setAdapter(mAdapter);
+    }
+
+
 
     private void LinearQueryData() {
 
@@ -476,6 +479,12 @@ public class FragmentMyPage extends Fragment {
                 if(commentAdapter != null){
                     commentAdapter.startListening();
                 }
+
+                holder.itemView.setOnClickListener(v ->{
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    intent.putExtra("time", model.getTimeStamp());
+                    startActivityForResult(intent,1001);
+                });
 
                 //댓글달기 버튼 눌렀을때
                 holder.commentOpenButton.setOnClickListener(v->{

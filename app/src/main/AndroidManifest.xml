@@ -19,7 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activity.DetailActivity"></activity>
+        <activity android:name=".Activity.DetailActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

@@ -9,10 +9,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Display;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,8 +23,7 @@ import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.DB.Comment;
 import com.example.mobileproject.R;
-import com.example.mobileproject.holder.HomeItemHolder;
-import com.example.mobileproject.model.DetailItem;
+import com.example.mobileproject.model.CommentItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +35,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
     Context context;
@@ -76,24 +79,92 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_detail);
+
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+
+
+        int width = (int) (display.getWidth() * 0.9); //Display 사이즈의 70%
+
+        int height = (int) (display.getHeight() * 0.9);  //Display 사이즈의 90%
+
+        getWindow().getAttributes().width = width;
+
+        getWindow().getAttributes().height = height;
+
         context = this;
 
         miniProfileImage = findViewById(R.id.miniprofil_imageview);
         userNickNameTitle = findViewById(R.id.title_text);
         imageView = findViewById(R.id.imageView);
-        userNickName = findViewById(R.id.comment_nickname_textview);
-        userContents = findViewById(R.id.contents_user_text);
+        userNickName = findViewById(R.id.contents_user_text);
+        userContents = findViewById(R.id.contents_text);
         commentRecyclerView = findViewById(R.id.comment_recycler_view);
         editText = findViewById(R.id.comment_edittext);
         comment_post_button = findViewById(R.id.comment_post_button);
+        commentEditText = findViewById(R.id.comment_edittext);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        commentEditText.requestFocus();
+        InputMethodManager immhide = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
 
         Intent intent = getIntent();
 
         timeStamp = intent.getExtras().getString("time");
+
+
+        DocumentReference docRef = db.collection("User").document(mUser.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+
+                        comment_post_button.setOnClickListener(v->{
+                            String TAG = "CommentPost";
+                            //시간
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            String ts = tsLong.toString();
+
+                            Map<String, Object> docData = new HashMap<>();
+                            docData.put("contents", editText.getText().toString());
+                            docData.put("timestamp", new Date());
+                            docData.put("nickname", document.getString("nickname"));
+
+                            db.collection("post").document(timeStamp)
+                                    .collection("comment").document(ts)
+                                    .set(docData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        editText.setText("");
+//                    adapter.notifyDataSetChanged();
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                    })
+                                    .addOnFailureListener(e ->
+                                            Log.w(TAG, "Error writing document", e));
+                        });
+
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+
+
 
         queryData();
     }
@@ -111,7 +182,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        if(commentAdapter != null) {
+        if(mAdapter != null) {
             mAdapter.stopListening();
         }
         if(commentAdapter != null){
@@ -144,14 +215,30 @@ public class DetailActivity extends AppCompatActivity {
                                 .into(imageView);
 
                         userNickName .setText(document.getString("nickname"));
-                        userContents .setText(document.getString("contents"));
+                        Comment.getInstance().setReadMore(userContents, document.getString("contents") + "", 1);
 
-                        comment_post_button.setOnClickListener(v->{
-                            prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter, commentEditText, getActivity());
-                        });
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
-                        commentRecyclerView =
+                        commentRecyclerView.setLayoutManager(layoutManager);
 
+                        commentRecyclerView.setHasFixedSize(false);
+
+                        Query query = FirebaseFirestore.getInstance()
+                                .collection("post").document(timeStamp)
+                                .collection("comment")
+                                .orderBy("timestamp", Query.Direction.DESCENDING);
+
+                        FirestoreRecyclerOptions<CommentItem> options = new FirestoreRecyclerOptions.Builder<CommentItem>()
+                                .setQuery(query, CommentItem.class)
+                                .build();
+
+                        commentAdapter = new CommentRecyclerAdapter(options);
+
+                        commentRecyclerView.setAdapter(commentAdapter);
+
+                        if(commentAdapter != null){
+                            commentAdapter.startListening();
+                        }
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d(TAG, "No such document");
@@ -163,71 +250,6 @@ public class DetailActivity extends AppCompatActivity {
         });
 
 
-        Query query = FirebaseFirestore.getInstance()
-                .collection("post")
-                .orderBy("timestamp", Query.Direction.DESCENDING);
-
-        FirestoreRecyclerOptions<DetailItem> options = new FirestoreRecyclerOptions.Builder<DetailItem>()
-                .setQuery(query, DetailItem.class)
-                .build();
-
-        mAdapter = new com.example.mobileproject.Adapter.FirestoreRecyclerAdapter(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
-                // Bind the Chat object to the ChatHolder
-                // ...
-                holder.nickname.setText(model.getNickname());
-
-                holder.contentsUserNickname.setText(model.getNickname());
-
-                Glide.with(holder.itemView)
-                        .load(model.getUserProfile())
-                        .centerCrop()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(holder.userProfile);
-
-                Glide.with(holder.itemView)
-                        .load(model.getDownloadUrl())
-                        .centerCrop()
-                        .placeholder(R.mipmap.ic_launcher)
-                        .into(holder.imageView);
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-
-                //holder.contents.setText(model.getContents() + "");
-                Comment.getInstance().setReadMore(holder.contents, model.getContents() + "", 1);
-
-                holder.commentRecyclerView.setLayoutManager(layoutManager);
-
-                holder.commentRecyclerView.setHasFixedSize(true);
-
-                commentAdapter = new CommentRecyclerAdapter(Comment.getInstance().CommentQuery(model));
-
-                holder.commentRecyclerView.setAdapter(commentAdapter);
-
-                if(commentAdapter != null){
-                    commentAdapter.startListening();
-                }
-
-                //댓글전송
-                holder.commentPost.setOnClickListener(v -> {
-                    Comment.getInstance().CommentPost(commentEditText, model, db, commentAdapter);
-                });
-            }
-
-            @NonNull
-            @Override
-            public HomeItemHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                View view = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.item_detail, viewGroup, false);
-                commentLayout = view.findViewById(R.id.comment_layout);
-
-                commentEditText = view.findViewById(R.id.comment_edittext);
-
-                return new HomeItemHolder(view);
-            }
-        };
-        recyclerView.setAdapter(mAdapter);
     }
 
 
