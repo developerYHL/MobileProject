@@ -33,10 +33,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 public class FragmentHome extends Fragment {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -198,43 +194,12 @@ public class FragmentHome extends Fragment {
 
                 //댓글달기 버튼 눌렀을때
                 holder.commentOpenButton.setOnClickListener(v->{
-                    if (selectedItems.get(position)) {
-                        // 펼쳐진 Item을 클릭 시
-                        Log.e("delete1","delete");
-                        selectedItems.delete(position);
-                    } else {
-                        // 직전의 클릭됐던 Item의 클릭상태를 지움
-                        Log.e("delete2","delete");
-                        selectedItems.delete(prePosition);
-                        // 클릭한 Item의 position을 저장
-                        selectedItems.put(position, true);
-                    }
-                    // 해당 포지션의 변화를 알림
-                    if (prePosition != -1) mAdapter.notifyItemChanged(prePosition);
-                    mAdapter.notifyItemChanged(position);
-                    // 클릭된 position 저장
-                    prePosition = position;
+                    prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter);
                 });
 
                 //댓글달기버튼
                 holder.commentPost.setOnClickListener(v -> {
-
-                    //시간
-                    Long tsLong = System.currentTimeMillis()/1000;
-                    String ts = tsLong.toString();
-
-                    Map<String, Object> docData = new HashMap<>();
-                    docData.put("contents", commentEditText.getText().toString());
-                    docData.put("timestamp", new Date());
-                    docData.put("nickname", model.getNickname());
-
-                    db.collection("post").document(model.getTimeStamp())
-                            .collection("comment").document(ts)
-                            .set(docData)
-                            .addOnSuccessListener(aVoid ->
-                                    Log.d(TAG, "DocumentSnapshot successfully written!"))
-                            .addOnFailureListener(e ->
-                                    Log.w(TAG, "Error writing document", e));
+                    Comment.getInstance().CommentPost(commentEditText, model, db);
                 });
 
                 changeVisibility(selectedItems.get(position));

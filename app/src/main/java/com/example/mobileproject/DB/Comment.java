@@ -8,17 +8,21 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.mobileproject.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.mobileproject.model.DetailItem;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Comment {
     private static final Comment instance = new Comment();
@@ -31,20 +35,26 @@ public class Comment {
     }
 
 
-    public void CommentPost(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+    public void CommentPost(EditText editText, DetailItem model, FirebaseFirestore db){
+        String TAG = "CommentPost";
+        //시간
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
 
-        db.collection("post")
-                .whereEqualTo("uid", mUser.getUid())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                        }
-                    } else {
-                    }
-                });
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("contents", editText.getText().toString());
+        docData.put("timestamp", new Date());
+        docData.put("nickname", model.getNickname());
+
+        db.collection("post").document(model.getTimeStamp())
+                .collection("comment").document(ts)
+                .set(docData)
+                .addOnSuccessListener(aVoid -> {
+                    editText.setText("");
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                })
+                .addOnFailureListener(e ->
+                        Log.w(TAG, "Error writing document", e));
     }
 
     public static void setReadMore(final TextView view, final String text, final int maxLine) {
@@ -114,5 +124,25 @@ public class Comment {
     }
 
 
+    public int CommentOpenButton(SparseBooleanArray selectedItems, int position, int prePosition, FirestoreRecyclerAdapter adapter){
+        if (selectedItems.get(position)) {
+            // 펼쳐진 Item을 클릭 시
+            Log.e("delete1","delete");
+            selectedItems.delete(position);
+        } else {
+            // 직전의 클릭됐던 Item의 클릭상태를 지움
+            Log.e("delete2","delete");
+            selectedItems.delete(prePosition);
+            // 클릭한 Item의 position을 저장
+            selectedItems.put(position, true);
+        }
+        // 해당 포지션의 변화를 알림
+        if (prePosition != -1) adapter.notifyItemChanged(prePosition);
+        adapter.notifyItemChanged(position);
+        // 클릭된 position 저장
+        prePosition = position;
+
+        return prePosition;
+    }
 
 }
