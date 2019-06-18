@@ -269,59 +269,60 @@ public class FragmentHome extends Fragment {
         }
 
 
-        List<CharSequence> lines = new ArrayList<>();
-        int count = view.getLineCount();
-        for (int line = 0; line < count; line++) {
-            int start = view.getLayout().getLineStart(line);
-            int end = view.getLayout().getLineEnd(line);
-            CharSequence substring = view.getText().subSequence(start, end);
-            lines.add(substring);
-            Log.i("linesdd",lines.size() + "");
-            Log.i("linesdd","asd");
-
-        }
-
-            view.setTag(text); //Tag에 text 저장
-        view.setText(text); // setText를 미리 하셔야  getLineCount()를 호출가능
-            //getLineCount()는 UI 백그라운드에서만 가져올수 있음
-            view.post(() -> {
-                if (view.getLineCount() >= maxLine) { //Line Count가 설정한 MaxLine의 값보다 크다면 처리시작
-
-                    int lineEndIndex = view.getLayout().getLineVisibleEnd(maxLine - 1); //Max Line 까지의 text length
 
 
-                    String[] split = text.split("\n"); //text를 자름
-                    int itemCount = 0;
+        view.setTag(text); //Tag에 text 저장
+          view.setText(text); // setText를 미리 하셔야  getLineCount()를 호출가능
+        //getLineCount()는 UI 백그라운드에서만 가져올수 있음
+        view.post(() -> {
+            if (view.getLineCount() > maxLine) { //Line Count가 설정한 MaxLine의 값보다 크다면 처리시작
 
-                    String lessText = "";
-                    for (CharSequence item : lines) {
-                        String items = item.toString();
-                        itemCount ++;
-                        if (itemCount >= lines.size()) { //마지막 줄일때!
-                            if (items.length() >= expanedText.length()) {
-                                lessText += items.substring(0, items.length() - (expanedText.length())) + expanedText;
-                            } else {
-                                lessText += items + expanedText;
-                            }
-                            break; //종료
-                        }
-                        lessText += items + "\n";
-                    }
-                    SpannableString spannableString = new SpannableString(lessText);
-                    spannableString.setSpan(new ClickableSpan() {//클릭이벤트
-                        @Override
-                        public void onClick(View v) {
-                            view.setText(text);
-                        }
+                int lineEndIndex = view.getLayout().getLineVisibleEnd(maxLine - 1); //Max Line 까지의 text length
 
-                        @Override
-                        public void updateDrawState(TextPaint ds) { //컬러 처리
-                            ds.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
-                        }
-                    }, spannableString.length() - expanedText.length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    view.setText(spannableString);
-                    view.setMovementMethod(LinkMovementMethod.getInstance());
+                List<String> lines = new ArrayList<>();
+                int count = view.getLineCount();
+                for (int line = 0; line < count; line++) {
+                    int start = view.getLayout().getLineStart(line);
+                    int end = view.getLayout().getLineEnd(line);
+                    CharSequence substring = view.getText().subSequence(start, end);
+                    lines.add(substring.toString());
+                    Log.i("linesdd",lines.size() + "");
+                    Log.i("linesdd","asd");
+
                 }
-            });
+
+                String[] split = text.split("\n"); //text를 자름
+
+                int splitLength = 0;
+
+                String lessText = "";
+                for (String item : lines) {
+                    splitLength += item.length() + 1;
+                    if (splitLength >= lineEndIndex) { //마지막 줄일때!
+                        if (item.length() >= expanedText.length()) {
+                            lessText += item.substring(0, item.length() - (expanedText.length())-5) + expanedText;
+                        } else {
+                            lessText += item + expanedText;
+                        }
+                        break; //종료
+                    }
+                    //lessText += item + "\n";
+                }
+                SpannableString spannableString = new SpannableString(lessText);
+                spannableString.setSpan(new ClickableSpan() {//클릭이벤트
+                    @Override
+                    public void onClick(View v) {
+                        view.setText(text);
+                    }
+
+                    @Override
+                    public void updateDrawState(TextPaint ds) { //컬러 처리
+                        ds.setColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+                    }
+                }, spannableString.length() - expanedText.length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                view.setText(spannableString);
+                view.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        });
     }
 }
