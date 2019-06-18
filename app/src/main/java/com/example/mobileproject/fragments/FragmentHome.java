@@ -2,6 +2,7 @@ package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -18,10 +19,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.example.mobileproject.Activity.DetailActivity;
 import com.example.mobileproject.Activity.MainActivity;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
 import com.example.mobileproject.DB.Comment;
-import com.example.mobileproject.ItemClickSupport;
 import com.example.mobileproject.R;
 import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
@@ -81,17 +82,18 @@ public class FragmentHome extends Fragment {
 
         recyclerView.setLayoutManager(layoutManager);
 
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerView, position, v) -> {
-
-
-        });
-
-        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                return true;
-            }
-        });
+//        ItemClickSupport.addTo(recyclerView).setOnItemClickListener((recyclerView, position, v) -> {
+//
+//
+//        });
+//
+//        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+//
+//                return true;
+//            }
+//        });
 
         queryData();
         return view;
@@ -174,12 +176,15 @@ public class FragmentHome extends Fragment {
                 Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
 
 
+                holder.itemView.setOnClickListener(v ->{
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    intent.putExtra("time", model.getTimeStamp());
+                    startActivityForResult(intent,1001);
+                });
+
                 //댓글달기 버튼 눌렀을때
                 holder.commentOpenButton.setOnClickListener(v->{
                     prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter, commentEditText, getActivity());
-
-
-
                 });
 
                 //댓글전송

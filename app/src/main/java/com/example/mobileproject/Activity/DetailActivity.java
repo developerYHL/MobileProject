@@ -1,6 +1,7 @@
 package com.example.mobileproject.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +12,12 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.mobileproject.Adapter.CommentRecyclerAdapter;
@@ -24,8 +27,12 @@ import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,11 +48,9 @@ public class DetailActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private RecyclerView recyclerView;
-    private RecyclerView commentRecyclerView;
 
     private ImageView mPreviewImageView;
 
-    private ProgressBar mProgressBar;
 
     private FirebaseUser mUser;
 
@@ -57,13 +62,38 @@ public class DetailActivity extends AppCompatActivity {
 
     private EditText commentEditText;
 
+    String timeStamp;
+
+    ImageView miniProfileImage;
+    TextView userNickName;
+    ImageView imageView;
+    TextView userNickNameTitle;
+    TextView userContents;
+    RecyclerView commentRecyclerView;
+    EditText editText;
+    ImageButton comment_post_button;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
         context = this;
+
+        miniProfileImage = findViewById(R.id.miniprofil_imageview);
+        userNickNameTitle = findViewById(R.id.title_text);
+        imageView = findViewById(R.id.imageView);
+        userNickName = findViewById(R.id.comment_nickname_textview);
+        userContents = findViewById(R.id.contents_user_text);
+        commentRecyclerView = findViewById(R.id.comment_recycler_view);
+        editText = findViewById(R.id.comment_edittext);
+        comment_post_button = findViewById(R.id.comment_post_button);
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        Intent intent = getIntent();
+
+        timeStamp = intent.getExtras().getString("time");
 
         queryData();
     }
@@ -81,8 +111,9 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        mAdapter.stopListening();
-
+        if(commentAdapter != null) {
+            mAdapter.stopListening();
+        }
         if(commentAdapter != null){
             commentAdapter.stopListening();
         }
@@ -90,6 +121,47 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private void queryData() {
+
+        DocumentReference docRef = db.collection("post").document(timeStamp);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Glide.with(context)
+                                .load(document.getString("UserProfile"))
+                                .centerCrop()
+                                .placeholder(R.mipmap.ic_launcher)
+                                .into(miniProfileImage);
+
+                        userNickNameTitle.setText(document.getString("nickname"));
+
+                        Glide.with(context)
+                                .load(document.getString("downloadUrl"))
+                                .centerCrop()
+                                .placeholder(R.mipmap.ic_launcher)
+                                .into(imageView);
+
+                        userNickName .setText(document.getString("nickname"));
+                        userContents .setText(document.getString("contents"));
+
+                        comment_post_button.setOnClickListener(v->{
+                            prePosition = Comment.getInstance().CommentOpenButton(selectedItems, position, prePosition, mAdapter, commentEditText, getActivity());
+                        });
+
+                        commentRecyclerView =
+
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
 
         Query query = FirebaseFirestore.getInstance()
                 .collection("post")
