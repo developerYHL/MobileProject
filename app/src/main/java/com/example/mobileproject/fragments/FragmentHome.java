@@ -1,7 +1,6 @@
 package com.example.mobileproject.fragments;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -186,14 +185,6 @@ public class FragmentHome extends Fragment {
                 //댓글전송
                 holder.commentPost.setOnClickListener(v -> {
                     Comment.getInstance().CommentPost(commentEditText, model, db, commentAdapter);
-
-                    notifyDataSetChanged();
-                    InputMethodManager immhide = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-
-                    immhide.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-
-
                 });
 
                 changeVisibility(selectedItems.get(position), position);
