@@ -1,5 +1,5 @@
 
-## **안드로이드 기말고사 프로젝트 **  ##
+## ** JJapstargram **  ##
 
 [영상](https://www.youtube.com/watch?v=KGw7jAg-7VE)
 
