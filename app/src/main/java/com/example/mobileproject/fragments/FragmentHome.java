@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.mobileproject.Activity.DetailActivity;
 import com.example.mobileproject.Activity.MainActivity;
@@ -28,8 +29,12 @@ import com.example.mobileproject.holder.HomeItemHolder;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
@@ -173,7 +178,11 @@ public class FragmentHome extends Fragment {
             protected void onBindViewHolder(@NonNull HomeItemHolder holder, int position, DetailItem model) {
                 // Bind the Chat object to the ChatHolder
                 // ...
+
+
                 Comment.getInstance().LinearLayoutAdapteronBindViewHolder(holder, position, model, getActivity(), commentAdapter);
+
+
 
                 holder.imageButton.setOnClickListener(v->{
                     if(model.getUid().equals(mUser.getUid()) )

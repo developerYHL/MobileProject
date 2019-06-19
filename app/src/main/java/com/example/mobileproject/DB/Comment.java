@@ -26,6 +26,11 @@ import com.example.mobileproject.model.CommentItem;
 import com.example.mobileproject.model.DetailItem;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -64,21 +69,34 @@ public class Comment {
         Long tsLong = System.currentTimeMillis()/1000;
         String ts = tsLong.toString();
 
-        Map<String, Object> docData = new HashMap<>();
-        docData.put("contents", editText.getText().toString());
-        docData.put("timestamp", new Date());
-        docData.put("nickname", model.getNickname());
+        FirebaseUser asd = FirebaseAuth.getInstance().getCurrentUser();
 
-        db.collection("post").document(model.getTimeStamp())
-                .collection("comment").document(ts)
-                .set(docData)
-                .addOnSuccessListener(aVoid -> {
-                    editText.setText("");
+
+        DocumentReference docRef = db.collection("User").document(asd.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Map<String, Object> docData = new HashMap<>();
+                docData.put("contents", editText.getText().toString());
+                docData.put("timestamp", new Date());
+                docData.put("nickname", documentSnapshot.getString("nickname"));
+
+                db.collection("post").document(model.getTimeStamp())
+                        .collection("comment").document(ts)
+                        .set(docData)
+                        .addOnSuccessListener(aVoid -> {
+                            editText.setText("");
 //                    adapter.notifyDataSetChanged();
-                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                })
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Error writing document", e));
+                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                        })
+                        .addOnFailureListener(e ->
+                                Log.w(TAG, "Error writing document", e));
+            }
+        });
+
+
+
+
     }
 
     public static void setReadMore(final TextView view, final String text, final int maxLine) {
@@ -181,7 +199,7 @@ public class Comment {
     public void LinearLayoutAdapteronBindViewHolder(HomeItemHolder holder, int position, DetailItem model, FragmentActivity context, CommentRecyclerAdapter commentAdapter){
         holder.nickname.setText(model.getNickname());
 
-        holder.contentsUserNickname.setText(model.getNickname());
+        holder.contentsUserNickname.setText(model.getUid());
 
         Glide.with(holder.itemView)
                 .load(model.getUserProfile())
